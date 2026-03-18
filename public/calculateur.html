@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>ROI — Dilimo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;1,300&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #0D1117;
+      --ink2: #1C2536;
+      --slate: #4A5568;
+      --mist: #8896A8;
+      --ghost: #C8D3DC;
+      --fog: #E8EDF2;
+      --paper: #F4F6F8;
+      --white: #FFFFFF;
+      --gold: #C9A84C;
+      --gold2: #E8C876;
+      --gold-bg: #FDF8EE;
+      --green: #1A7F5A;
+      --green-bg: #EBF8F3;
+      --green-light: #D1FAE5;
+      --orange: #D97706;
+      --orange-bg: #FFFBEB;
+      --red: #C0392B;
+      --red-bg: #FEF2F2;
+      --blue: #2563EB;
+      --blue-bg: #EFF6FF;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 4px 16px rgba(0, 0, 0, .08);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, .12), 0 2px 8px rgba(0, 0, 0, .06);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--ink);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--ink);
+    }
+
+    .logo-text {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 20px;
+      color: var(--white);
+    }
+
+    .logo-text strong {
+      font-weight: 700;
+      color: var(--gold2);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ghost);
+      text-decoration: none;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, .1);
+      color: var(--white);
+    }
+
+    .nav-link.active {
+      background: rgba(201, 168, 76, .15);
+      color: var(--gold2);
+    }
+
+    .btn-new-ope {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 8px;
+    }
+
+    .btn-new-ope:hover {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: var(--ink2);
+      padding: 40px 32px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(201, 168, 76, .1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 32px;
+      color: var(--white);
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold2);
+    }
+
+    .hero p {
+      color: var(--mist);
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    /* ─── MAIN LAYOUT ─── */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ─── PANELS ─── */
+    .panel {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--fog);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .panel-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--fog);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .panel-sub {
+      font-size: 12px;
+      color: var(--mist);
+      margin-top: 1px;
+    }
+
+    .panel-body {
+      padding: 20px 24px;
+    }
+
+    /* ─── FORM ELEMENTS ─── */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-row.three {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .form-row.full {
+      grid-template-columns: 1fr;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    .form-hint {
+      font-size: 11px;
+      color: var(--mist);
+    }
+
+    .form-input {
+      border: 1.5px solid var(--ghost);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--white);
+      transition: border-color .15s;
+      width: 100%;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, .1);
+    }
+
+    .form-input.computed {
+      background: var(--paper);
+      color: var(--slate);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-suffix {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--mist);
+      pointer-events: none;
+    }
+
+    .form-input.has-suffix {
+      padding-right: 36px;
+    }
+
+    /* ─── TRAVAUX LEVEL ─── */
+    .travaux-levels {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .level-card {
+      border: 2px solid var(--ghost);
+      border-radius: 10px;
+      padding: 14px 12px;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: center;
+    }
+
+    .level-card:hover {
+      border-color: var(--gold);
+      background: var(--gold-bg);
+    }
+
+    .level-card.active {
+      border-color: var(--gold);
+      background: var(--gold-bg);
+    }
+
+    .level-card.active .level-name {
+      color: var(--ink);
+    }
+
+    .level-icon {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .level-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--slate);
+      margin-bottom: 4px;
+    }
+
+    .level-range {
+      font-size: 11px;
+      color: var(--mist);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── TOGGLE ─── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--ghost);
+      border-radius: 22px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 3px;
+      top: 3px;
+      background: var(--white);
+      border-radius: 50%;
+      transition: transform .2s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+    }
+
+    .toggle input:checked+.toggle-slider {
+      background: var(--gold);
+    }
+
+    .toggle input:checked+.toggle-slider::before {
+      transform: translateX(18px);
+    }
+
+    .toggle-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .toggle-sub {
+      font-size: 11px;
+      color: var(--mist);
+    }
+
+    /* ─── FINANCEMENT SECTION ─── */
+    .credit-fields {
+      display: none;
+    }
+
+    .credit-fields.visible {
+      display: block;
+    }
+
+    /* ─── SLIDER ─── */
+    .slider-wrap {
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--paper);
+      border-radius: 10px;
+    }
+
+    .slider-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .slider-label span {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--gold);
+      font-size: 14px;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: var(--ghost);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(201, 168, 76, .4);
+    }
+
+    /* ─── RÉSULTATS ─── */
+    .results-sticky {
+      position: sticky;
+      top: 84px;
+    }
+
+    .prix-achat-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .pac-card {
+      border-radius: 10px;
+      padding: 16px 12px;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all .2s;
+    }
+
+    .pac-card.m20 {
+      background: var(--blue-bg);
+      border-color: #BFDBFE;
+    }
+
+    .pac-card.m25 {
+      background: var(--gold-bg);
+      border-color: #FDE68A;
+    }
+
+    .pac-card.m30 {
+      background: var(--green-bg);
+      border-color: #A7F3D0;
+    }
+
+    .pac-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 6px;
+    }
+
+    .pac-card.m20 .pac-label {
+      color: var(--blue);
+    }
+
+    .pac-card.m25 .pac-label {
+      color: var(--orange);
+    }
+
+    .pac-card.m30 .pac-label {
+      color: var(--green);
+    }
+
+    .pac-value {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .pac-sub {
+      font-size: 11px;
+      color: var(--mist);
+      margin-top: 3px;
+    }
+
+    /* ─── TABLEAU SYNTHÈSE ─── */
+    .synth-table {
+      width: 100%;
+    }
+
+    .synth-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--fog);
+      gap: 12px;
+    }
+
+    .synth-row:last-child {
+      border-bottom: none;
+    }
+
+    .synth-row.total {
+      padding: 12px 0 0;
+      margin-top: 4px;
+      border-top: 2px solid var(--ink);
+      border-bottom: none;
+    }
+
+    .synth-label {
+      font-size: 13px;
+      color: var(--slate);
+    }
+
+    .synth-row.total .synth-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .synth-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .synth-value.neg {
+      color: var(--red);
+    }
+
+    .synth-value.pos {
+      color: var(--green);
+    }
+
+    .synth-row.total .synth-value {
+      font-size: 15px;
+    }
+
+    .synth-row.highlight {
+      background: var(--paper);
+      margin: 0 -24px;
+      padding: 9px 24px;
+    }
+
+    /* ─── MARGE INDICATOR ─── */
+    .marge-indicator {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .marge-indicator.green {
+      background: var(--green-bg);
+      border: 1.5px solid #A7F3D0;
+    }
+
+    .marge-indicator.orange {
+      background: var(--orange-bg);
+      border: 1.5px solid #FDE68A;
+    }
+
+    .marge-indicator.red {
+      background: var(--red-bg);
+      border: 1.5px solid #FECACA;
+    }
+
+    .marge-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .marge-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .marge-dot.green {
+      background: var(--green);
+    }
+
+    .marge-dot.orange {
+      background: var(--orange);
+    }
+
+    .marge-dot.red {
+      background: var(--red);
+    }
+
+    .marge-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .marge-sub {
+      font-size: 11px;
+      color: var(--mist);
+    }
+
+    .marge-pct {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .marge-pct.green {
+      color: var(--green);
+    }
+
+    .marge-pct.orange {
+      color: var(--orange);
+    }
+
+    .marge-pct.red {
+      color: var(--red);
+    }
+
+    /* ─── ROI + PORTAGE ─── */
+    .kpi-mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-mini {
+      background: var(--paper);
+      border-radius: 10px;
+      padding: 14px 16px;
+      border: 1px solid var(--fog);
+    }
+
+    .kpi-mini-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--mist);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      margin-bottom: 4px;
+    }
+
+    .kpi-mini-value {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .kpi-mini-unit {
+      font-size: 12px;
+      color: var(--mist);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--mist);
+    }
+
+    .empty-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .empty-text {
+      font-size: 14px;
+    }
+
+    /* ─── RESET BTN ─── */
+    .btn-reset {
+      background: none;
+      border: 1.5px solid var(--ghost);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--slate);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .btn-reset:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-up {
+      animation: fadeUp .35s ease forwards;
+    }
+
+    @media (max-width: 960px) {
+      .main {
+        grid-template-columns: 1fr !important;
+      }
+
+      .results-sticky {
+        position: static !important;
+        top: auto !important;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="/dilimo-responsive.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <a href="/" class="logo">
+      <div class="logo-mark">D</div>
+      <div class="logo-text"><strong>Dilimo</strong></div>
+    </a>
+    <nav class="nav-links">
+      <button class="btn-new-ope" onclick="nouvelleOperation()" title="Nouvelle opération">🔄 NOUVELLE OPÉ.</button>
+      <a href="/" class="nav-link"><span style="font-size:14px;line-height:1">📊</span><span>SCAN</span></a>
+      <a href="/calculateur.html" class="nav-link active"><span
+          style="font-size:14px;line-height:1">🧮</span><span>ROI</span></a>
+      <a href="/rapport.html" class="nav-link"><span
+          style="font-size:14px;line-height:1">📋</span><span>VISITE</span></a>
+      <a href="/offre.html" class="nav-link"><span style="font-size:14px;line-height:1">📝</span><span>OFFRE</span></a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-label">⚙️ Outil marchand de biens</div>
+      <h1>Calculateur de <em>rentabilité</em></h1>
+      <p>Prix d'achat cible · Marge nette · ROI annualisé · Frais financiers</p>
+    </div>
+  </div>
+
+  <script src="/persistance.js"></script>
+  <!-- MAIN -->
+  <div class="main" style="display:grid;grid-template-columns:1fr 420px;gap:24px;align-items:start;" id="main-content">
+
+    <!-- COL GAUCHE : FORMULAIRE -->
+    <div class="form-col">
+
+      <!-- BLOC 1 — LE BIEN -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:#EFF6FF">🏠</div>
+          <div>
+            <div class="panel-title">Le bien</div>
+            <div class="panel-sub">Caractéristiques générales</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="form-row full">
+            <div class="form-group">
+              <label class="form-label">Adresse</label>
+              <input type="text" class="form-input" id="adresse" placeholder="Ex : 12 rue de la Liberté, Dijon">
+            </div>
+          </div>
+          <div class="form-row three">
+            <div class="form-group">
+              <label class="form-label">Type de bien</label>
+              <select class="form-input" id="typeBien" onchange="calculer()">
+                <option value="appartement">Appartement</option>
+                <option value="maison">Maison</option>
+                <option value="immeuble">Immeuble</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Surface habitable</label>
+              <div class="input-wrap">
+                <input type="number" class="form-input has-suffix" id="surface" placeholder="80" min="1"
+                  oninput="calculer()">
+                <span class="input-suffix">m²</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Année construction</label>
+              <input type="number" class="form-input" id="anneeConstruction" placeholder="1970" min="1800" max="2024"
+                oninput="calculer()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOC 2 — ACQUISITION -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:#FDF8EE">💰</div>
+          <div>
+            <div class="panel-title">Acquisition</div>
+            <div class="panel-sub">Le prix d'achat cible est calculé automatiquement</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Prix de revente estimé</label>
+              <div class="input-wrap">
+                <input type="number" class="form-input has-suffix" id="prixRevente" placeholder="250 000"
+                  oninput="calculer()">
+                <span class="input-suffix">€</span>
+              </div>
+              <span class="form-hint">Basé sur les prix DVF du secteur</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Frais d'agence vente</label>
+              <div class="input-wrap">
+                <input type="number" class="form-input has-suffix" id="fraisAgenceVente" placeholder="4" value="4"
+                  step="0.5" oninput="calculer()">
+                <span class="input-suffix">%</span>
+              </div>
+              <span class="form-hint">En % du prix de revente</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Frais de notaire achat</label>
+              <div class="input-wrap">
+                <input type="number" class="form-input has-suffix computed" id="fraisNotaire" value="3" step="0.1"
+                  oninput="calculer()">
+                <span class="input-suffix">%</span>
+              </div>
+              <span class="form-hint">3% en régime marchand de biens</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Frais de notaire (€)</label>
+              <div class="input-wrap">
+                <input type="number" class="form-input has-suffix computed" id="fraisNotaireEuros" placeholder="—"
+                  readonly>
+                <span class="input-suffix">€</span>
+              </div>
+              <span class="form-hint">Calculé automatiquement</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOC 3 — FINANCEMENT -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:#F0FDF4">🏦</div>
+          <div>
+            <div class="panel-title">Financement</div>
+            <div class="panel-sub">Comptant ou crédit bancaire</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="toggle-row">
+            <label class="toggle">
+              <input type="checkbox" id="toggleCredit" onchange="toggleCredit()">
+              <span class="toggle-slider"></span>
+            </label>
+            <div>
+              <div class="toggle-label">Financement bancaire</div>
+              <div class="toggle-sub">Activer pour calculer les frais financiers</div>
+            </div>
+          </div>
+
+          <div class="credit-fields" id="creditFields">
+            <div class="form-row three">
+              <div class="form-group">
+                <label class="form-label">Montant emprunté</label>
+                <div class="input-wrap">
+                  <input type="number" class="form-input has-suffix" id="montantEmprunt" placeholder="200 000"
+                    oninput="calculer()">
+                  <span class="input-suffix">€</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Taux annuel</label>
+                <div class="input-wrap">
+                  <input type="number" class="form-input has-suffix" id="tauxCredit" placeholder="3.5" step="0.1"
+                    value="3.5" oninput="calculer()">
+                  <span class="input-suffix">%</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Durée</label>
+                <div class="input-wrap">
+                  <input type="number" class="form-input has-suffix" id="dureeCredit" placeholder="20" value="20"
+                    oninput="calculer()">
+                  <span class="input-suffix">ans</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Mensualité estimée</label>
+                <div class="input-wrap">
+                  <input type="number" class="form-input has-suffix computed" id="mensualite" readonly>
+                  <span class="input-suffix">€/mois</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Coût total du crédit</label>
+                <div class="input-wrap">
+                  <input type="number" class="form-input has-suffix computed" id="coutCredit" readonly>
+                  <span class="input-suffix">€</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOC 4 — TRAVAUX -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:#FFF7ED">🔨</div>
+          <div>
+            <div class="panel-title">Budget travaux</div>
+            <div class="panel-sub">Fourchette basée sur la surface saisie</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="travaux-levels" id="travauxLevels">
+            <div class="level-card" data-level="leger" onclick="selectLevel('leger')">
+              <div class="level-icon">🖌️</div>
+              <div class="level-name">Légère</div>
+              <div class="level-range">400–600 €/m²</div>
+            </div>
+            <div class="level-card active" data-level="moyen" onclick="selectLevel('moyen')">
+              <div class="level-icon">🔧</div>
+              <div class="level-name">Moyenne</div>
+              <div class="level-range">600–900 €/m²</div>
+            </div>
+            <div class="level-card" data-level="lourd" onclick="selectLevel('lourd')">
+              <div class="level-icon">🏗️</div>
+              <div class="level-name">Lourde</div>
+              <div class="level-range">1 000–1 500 €/m²</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 18px;">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Budget min estimé</label>
+                <div class="input-wrap">
+                  <input type="number" class="form-input has-suffix computed" id="travauxMin" readonly>
+                  <span class="input-suffix">€</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Budget max estimé</label>
+                <div class="input-wrap">
+                  <input type="number" class="form-input has-suffix computed" id="travauxMax" readonly>
+                  <span class="input-suffix">€</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-row full">
+              <div class="form-group">
+                <label class="form-label">Budget retenu pour le calcul</label>
+                <div class="input-wrap">
+                  <input type="number" class="form-input has-suffix" id="travauxRetenu" placeholder="0"
+                    oninput="this.dataset.userModified='1';calculer()">
+                  <span class="input-suffix">€</span>
+                </div>
+                <span class="form-hint">Pré-rempli avec la moyenne de la fourchette — modifiable</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOC 5 — PORTAGE -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:#F5F3FF">⏱️</div>
+          <div>
+            <div class="panel-title">Durée de portage</div>
+            <div class="panel-sub">Impact sur le ROI annualisé</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="slider-wrap">
+            <div class="slider-label">
+              Durée totale estimée
+              <span id="portageLabel">12 mois</span>
+            </div>
+            <input type="range" id="portageSlider" min="1" max="36" value="12" oninput="updatePortage()">
+            <div style="display:flex; justify-content:space-between; margin-top:6px;">
+              <span style="font-size:11px;color:var(--mist)">1 mois</span>
+              <span style="font-size:11px;color:var(--mist)">36 mois</span>
+            </div>
+          </div>
+
+          <!-- FISCALITÉ -->
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--fog);">
+            <div
+              style="font-size:12px; font-weight:600; color:var(--slate); text-transform:uppercase; letter-spacing:.4px; margin-bottom:12px;">
+              Fiscalité — SAS à l'IS</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Taux IS applicable</label>
+                <select class="form-input" id="tauxIS" onchange="calculer()">
+                  <option value="15">15% (taux réduit &lt; 42 500€)</option>
+                  <option value="25" selected>25% (taux normal)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">IS estimé</label>
+                <div class="input-wrap">
+                  <input type="number" class="form-input has-suffix computed" id="isEstime" readonly>
+                  <span class="input-suffix">€</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /form-col -->
+
+    <!-- COL DROITE : RÉSULTATS -->
+    <div class="results-sticky">
+
+      <!-- PRIX D'ACHAT CIBLE -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:var(--gold-bg)">🎯</div>
+          <div>
+            <div class="panel-title">Prix d'achat cible</div>
+            <div class="panel-sub">Pour atteindre votre marge brute</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="prix-achat-cards" id="prixAchatCards">
+            <div class="pac-card m20">
+              <div class="pac-label">Marge 20%</div>
+              <div class="pac-value" id="pac20">—</div>
+              <div class="pac-sub">Prix max</div>
+            </div>
+            <div class="pac-card m25">
+              <div class="pac-label">Marge 25%</div>
+              <div class="pac-value" id="pac25">—</div>
+              <div class="pac-sub">Prix max</div>
+            </div>
+            <div class="pac-card m30">
+              <div class="pac-label">Marge 30%</div>
+              <div class="pac-value" id="pac30">—</div>
+              <div class="pac-sub">Prix max</div>
+            </div>
+          </div>
+
+          <!-- Slider prix d'achat -->
+          <div class="slider-wrap">
+            <div class="slider-label">
+              Simuler avec un prix d'achat
+              <span id="prixAchatLabel">—</span>
+            </div>
+            <input type="range" id="prixAchatSlider" min="0" max="1000000" step="1000" value="0"
+              oninput="updatePrixAchat()">
+          </div>
+        </div>
+      </div>
+
+      <!-- RÉSULTATS MARGE -->
+      <div class="panel" id="resultsPanel">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:var(--green-bg)">📊</div>
+          <div>
+            <div class="panel-title">Analyse de l'opération</div>
+            <div class="panel-sub" id="resultsSub">Saisissez un prix d'achat pour simuler</div>
+          </div>
+        </div>
+        <div class="panel-body" id="resultsBody">
+          <div class="empty-state">
+            <div class="empty-icon">🧮</div>
+            <div class="empty-text">Renseignez le prix de revente<br>et le budget travaux pour démarrer</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /results -->
+  </div><!-- /main -->
+
+  <script>
+    // ─── State ────────────────────────────────────────────────────────────────────
+    const TRAVAUX_LEVELS = {
+      leger: { min: 400, max: 600 },
+      moyen: { min: 600, max: 900 },
+      lourd: { min: 1000, max: 1500 },
+    };
+    let currentLevel = 'moyen';
+    let currentPortage = 12;
+    let prixAchatSimule = 0;
+
+    // ─── Formatage ────────────────────────────────────────────────────────────────
+    const fmt = n => n !== null && !isNaN(n) ? Math.round(n).toLocaleString('fr-FR') : '—';
+    const fmtPct = n => n !== null && !isNaN(n) ? n.toFixed(1) + '%' : '—';
+
+    // ─── Travaux level ────────────────────────────────────────────────────────────
+    function selectLevel(level) {
+      currentLevel = level;
+      document.getElementById('travauxRetenu').dataset.userModified = '';
+      document.querySelectorAll('.level-card').forEach(c => {
+        c.classList.toggle('active', c.dataset.level === level);
+      });
+      updateTravauxFourchette();
+      calculer();
+    }
+
+    function updateTravauxFourchette() {
+      const surf = parseFloat(document.getElementById('surface').value) || 0;
+      const lvl = TRAVAUX_LEVELS[currentLevel];
+      const min = Math.round(surf * lvl.min);
+      const max = Math.round(surf * lvl.max);
+      const moy = Math.round((min + max) / 2);
+
+      document.getElementById('travauxMin').value = min || '';
+      document.getElementById('travauxMax').value = max || '';
+
+      // Pré-remplir le champ retenu avec la moyenne seulement s'il est vide
+      const retenu = document.getElementById('travauxRetenu');
+      if (surf > 0 && !retenu.dataset.userModified) retenu.value = moy;
+    }
+
+    // ─── Toggle crédit ────────────────────────────────────────────────────────────
+    function toggleCredit() {
+      const on = document.getElementById('toggleCredit').checked;
+      document.getElementById('creditFields').classList.toggle('visible', on);
+      calculer();
+    }
+
+    // ─── Portage slider ───────────────────────────────────────────────────────────
+    function updatePortage() {
+      currentPortage = parseInt(document.getElementById('portageSlider').value);
+      document.getElementById('portageLabel').textContent =
+        currentPortage === 1 ? '1 mois' : `${currentPortage} mois`;
+      calculer();
+    }
+
+    // ─── Prix d'achat slider ──────────────────────────────────────────────────────
+    function updatePrixAchat() {
+      prixAchatSimule = parseInt(document.getElementById('prixAchatSlider').value);
+      document.getElementById('prixAchatLabel').textContent = fmt(prixAchatSimule) + ' €';
+      calculer();
+    }
+
+    // ─── Calcul mensualité crédit ─────────────────────────────────────────────────
+    function calcMensualite(montant, tauxAnnuel, dureeAns) {
+      if (!montant || !tauxAnnuel || !dureeAns) return null;
+      const r = tauxAnnuel / 100 / 12;
+      const n = dureeAns * 12;
+      if (r === 0) return montant / n;
+      return montant * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    }
+
+    // ─── Calcul principal ─────────────────────────────────────────────────────────
+    function calculer() {
+      // Mettre à jour fourchette travaux
+      updateTravauxFourchette();
+
+      const prixRevente = parseFloat(document.getElementById('prixRevente').value) || 0;
+      const fraisAgencePct = parseFloat(document.getElementById('fraisAgenceVente').value) || 0;
+      const fraisNotairePct = parseFloat(document.getElementById('fraisNotaire').value) || 3;
+      const travaux = parseFloat(document.getElementById('travauxRetenu').value) || 0;
+      const tauxIS = parseFloat(document.getElementById('tauxIS').value) || 25;
+      const creditOn = document.getElementById('toggleCredit').checked;
+
+      if (!prixRevente) {
+        document.getElementById('resultsBody').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🧮</div>
+        <div class="empty-text">Renseignez le prix de revente<br>pour démarrer le calcul</div>
+      </div>`;
+        ['pac20', 'pac25', 'pac30'].forEach(id => document.getElementById(id).textContent = '—');
+        return;
+      }
+
+      const fraisAgence = prixRevente * fraisAgencePct / 100;
+
+      // Frais financiers crédit (sur durée de portage)
+      let fraisFinanciers = 0;
+      if (creditOn) {
+        const montant = parseFloat(document.getElementById('montantEmprunt').value) || 0;
+        const taux = parseFloat(document.getElementById('tauxCredit').value) || 3.5;
+        const duree = parseFloat(document.getElementById('dureeCredit').value) || 20;
+        const mensualite = calcMensualite(montant, taux, duree);
+        if (mensualite) {
+          document.getElementById('mensualite').value = Math.round(mensualite);
+          // Coût du crédit sur la durée de portage uniquement
+          const interetsPortage = montant * (taux / 100) * (currentPortage / 12);
+          fraisFinanciers = Math.round(interetsPortage);
+          document.getElementById('coutCredit').value = Math.round(montant * taux / 100 * duree);
+        }
+      }
+
+      // ── Calcul des prix d'achat cibles ───────────────────────────────────────
+      // Formule :
+      //   Marge brute % = (Prix revente - Prix achat - Frais notaire - Travaux - Frais agence) / Prix revente
+      //   Prix achat = Prix revente × (1 - marge%) - travaux - frais agence - frais financiers
+      //   Frais notaire = Prix achat × fraisNotairePct%
+      //   → Prix achat × (1 + fraisNotairePct%) = Prix revente × (1 - marge%) - travaux - frais agence - frais financiers
+      //   → Prix achat = [Prix revente × (1 - marge%) - travaux - frais agence - frais financiers] / (1 + fraisNotairePct%)
+
+      function calcPrixAchat(margePct) {
+        const num = prixRevente * (1 - margePct / 100) - travaux - fraisAgence - fraisFinanciers;
+        return num / (1 + fraisNotairePct / 100);
+      }
+
+      const pac20 = calcPrixAchat(20);
+      const pac25 = calcPrixAchat(25);
+      const pac30 = calcPrixAchat(30);
+
+      document.getElementById('pac20').textContent = pac20 > 0 ? fmt(pac20) + ' €' : '—';
+      document.getElementById('pac25').textContent = pac25 > 0 ? fmt(pac25) + ' €' : '—';
+      document.getElementById('pac30').textContent = pac30 > 0 ? fmt(pac30) + ' €' : '—';
+
+      // Frais de notaire affichés (sur le prix achat 25%)
+      const prixAchatRef = pac25 > 0 ? pac25 : 0;
+      document.getElementById('fraisNotaireEuros').value = Math.round(prixAchatRef * fraisNotairePct / 100) || '';
+
+      // Mise à jour slider
+      const sliderMax = Math.max(Math.round(pac20 * 1.3 / 10000) * 10000, 500000);
+      const slider = document.getElementById('prixAchatSlider');
+      slider.max = sliderMax;
+      if (prixAchatSimule === 0 && pac25 > 0) {
+        prixAchatSimule = Math.round(pac25);
+        slider.value = prixAchatSimule;
+        document.getElementById('prixAchatLabel').textContent = fmt(prixAchatSimule) + ' €';
+      }
+
+      // ── Simulation avec le prix d'achat du slider ────────────────────────────
+      const prixAchat = prixAchatSimule || pac25;
+      if (!prixAchat || prixAchat <= 0) return;
+
+      const fraisNotaireEuros = prixAchat * fraisNotairePct / 100;
+      const coutTotal = prixAchat + fraisNotaireEuros + travaux + fraisAgence + fraisFinanciers;
+      const margeBrute = prixRevente - coutTotal;
+      const margeBrutePct = (margeBrute / prixRevente) * 100;
+
+      // IS sur le bénéfice (marge brute)
+      const is = margeBrute > 0 ? margeBrute * tauxIS / 100 : 0;
+      document.getElementById('isEstime').value = Math.round(is);
+      const margeNette = margeBrute - is;
+      const margeNettePct = (margeNette / prixRevente) * 100;
+
+      // ROI annualisé : (marge nette / capital investi) / (portage en années)
+      const capitalInvesti = prixAchat + fraisNotaireEuros + travaux;
+      const roiAnnuel = capitalInvesti > 0
+        ? (margeNette / capitalInvesti) / (currentPortage / 12) * 100
+        : 0;
+
+      // Sauvegarder pour le compte rendu VISITE
+      try {
+        localStorage.setItem('immopro_calc_last', JSON.stringify({
+          prixAchat: prixAchat, prixRevente: pr, travaux: travaux,
+          fraisNotaire: fraisNotaireEuros, fraisAgence: fraisAgence,
+          fraisFinanciers: fraisFinanciers, is: Math.round(is),
+          margeBrute: margeBrute, margeBrutePct: margeBrutePct,
+          margeNette: margeNette, margeNettePct: margeNettePct,
+          roiAnnuel: roiAnnuel, portage: currentPortage,
+          niveauTravaux: currentLevel,
+          pac20: calcPrixAchat(20), pac25: calcPrixAchat(25), pac30: calcPrixAchat(30),
+        }));
+      } catch (e) { }
+
+      // ── Couleur indicateur ───────────────────────────────────────────────────
+      let couleur = 'red';
+      let label = '⚠️ Marge insuffisante';
+      if (margeNettePct >= 15) { couleur = 'green'; label = '✅ Opération rentable'; }
+      else if (margeNettePct >= 8) { couleur = 'orange'; label = '⚡ Marge limite'; }
+
+      document.getElementById('resultsSub').textContent =
+        `Simulation à ${fmt(prixAchat)} € · ${currentPortage} mois de portage`;
+
+      document.getElementById('resultsBody').innerHTML = `
+    <div class="marge-indicator ${couleur} fade-up">
+      <div class="marge-left">
+        <div class="marge-dot ${couleur}"></div>
+        <div>
+          <div class="marge-text">${label}</div>
+          <div class="marge-sub">Marge nette après IS</div>
+        </div>
+      </div>
+      <div class="marge-pct ${couleur}">${fmtPct(margeNettePct)}</div>
+    </div>
+
+    <div class="kpi-mini-grid fade-up">
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">Marge brute</div>
+        <div class="kpi-mini-value">${fmtPct(margeBrutePct)}</div>
+        <div class="kpi-mini-unit">${fmt(margeBrute)} €</div>
+      </div>
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">ROI annualisé</div>
+        <div class="kpi-mini-value">${fmtPct(roiAnnuel)}</div>
+        <div class="kpi-mini-unit">sur ${currentPortage} mois</div>
+      </div>
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">Marge nette</div>
+        <div class="kpi-mini-value">${fmt(margeNette)} €</div>
+        <div class="kpi-mini-unit">après IS ${tauxIS}%</div>
+      </div>
+      <div class="kpi-mini">
+        <div class="kpi-mini-label">Capital investi</div>
+        <div class="kpi-mini-value">${fmt(capitalInvesti)} €</div>
+        <div class="kpi-mini-unit">achat + notaire + travaux</div>
+      </div>
+    </div>
+
+    <div class="synth-table fade-up" style="padding-top:8px; border-top:1px solid var(--fog);">
+      <div class="synth-row">
+        <span class="synth-label">Prix de revente estimé</span>
+        <span class="synth-value pos">+ ${fmt(prixRevente)} €</span>
+      </div>
+      <div class="synth-row">
+        <span class="synth-label">— Prix d'achat</span>
+        <span class="synth-value neg">− ${fmt(prixAchat)} €</span>
+      </div>
+      <div class="synth-row">
+        <span class="synth-label">— Frais de notaire (${fraisNotairePct}%)</span>
+        <span class="synth-value neg">− ${fmt(fraisNotaireEuros)} €</span>
+      </div>
+      <div class="synth-row">
+        <span class="synth-label">— Budget travaux</span>
+        <span class="synth-value neg">− ${fmt(travaux)} €</span>
+      </div>
+      ${fraisFinanciers > 0 ? `
+      <div class="synth-row">
+        <span class="synth-label">— Frais financiers (${currentPortage} mois)</span>
+        <span class="synth-value neg">− ${fmt(fraisFinanciers)} €</span>
+      </div>` : ''}
+      <div class="synth-row">
+        <span class="synth-label">— Frais d'agence vente (${fraisAgencePct}%)</span>
+        <span class="synth-value neg">− ${fmt(fraisAgence)} €</span>
+      </div>
+      <div class="synth-row">
+        <span class="synth-label">= Marge brute</span>
+        <span class="synth-value ${margeBrute >= 0 ? 'pos' : 'neg'}">${margeBrute >= 0 ? '+' : ''} ${fmt(margeBrute)} €</span>
+      </div>
+      <div class="synth-row">
+        <span class="synth-label">— IS (${tauxIS}%)</span>
+        <span class="synth-value neg">− ${fmt(is)} €</span>
+      </div>
+      <div class="synth-row total">
+        <span class="synth-label">= Marge nette</span>
+        <span class="synth-value ${margeNette >= 0 ? 'pos' : 'neg'}">${margeNette >= 0 ? '+' : ''} ${fmt(margeNette)} €</span>
+      </div>
+    </div>
+  `;
+    }
+
+
+    // ─── Persistance formulaire entre onglets ────────────────────────────────────
+    function saveFormState() {
+      const ids = ['prixRevente', 'fraisAgenceVente', 'fraisNotaire', 'surface', 'typeBien',
+        'anneeConstruction', 'toggleCredit', 'montantEmprunt', 'tauxCredit',
+        'dureeCredit', 'travauxRetenu', 'portageSlider', 'tauxIS', 'prixAchatSlider'];
+      const state = {};
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) state[id] = el.type === 'checkbox' ? el.checked : el.value;
+      });
+      state['travauxLevel'] = currentLevel;
+      try { localStorage.setItem('dilimo_roi_form', JSON.stringify(state)); } catch (e) { }
+    }
+
+    function loadFormState() {
+      try {
+        const raw = localStorage.getItem('dilimo_roi_form');
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        Object.entries(state).forEach(([id, val]) => {
+          if (id === 'travauxLevel') { selectLevel(val); return; }
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (el.type === 'checkbox') { el.checked = val; toggleCredit(); }
+          else el.value = val;
+        });
+      } catch (e) { }
+    }
+
+    function resetForm() {
+      if (!confirm('Réinitialiser toutes les données du calculateur ?')) return;
+      try { localStorage.removeItem('dilimo_roi_form'); localStorage.removeItem('immopro_calc_last'); } catch (e) { }
+      location.reload();
+    }
+
+    // ─── Init ─────────────────────────────────────────────────────────────────────
+    document.getElementById('surface').addEventListener('input', () => {
+      updateTravauxFourchette();
+      calculer();
+    });
+
+    // Pré-remplir avec les données DVF si disponibles (depuis localStorage ou URL params)
+    window.addEventListener('load', () => {
+      loadFormState();
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('revente')) {
+        document.getElementById('prixRevente').value = params.get('revente');
+      }
+      if (params.get('surface')) {
+        document.getElementById('surface').value = params.get('surface');
+        updateTravauxFourchette();
+      }
+      if (params.get('adresse')) {
+        document.getElementById('adresse').value = params.get('adresse');
+      }
+      calculer();
+    });
+  </script>
+</body>
+
+</html>

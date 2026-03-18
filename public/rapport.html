@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>VISITE — Dilimo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;1,300&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0D1117;
+      --ink2: #1C2536;
+      --slate: #4A5568;
+      --mist: #8896A8;
+      --ghost: #C8D3DC;
+      --fog: #E8EDF2;
+      --paper: #F4F6F8;
+      --white: #FFFFFF;
+      --gold: #C9A84C;
+      --gold2: #E8C876;
+      --gold-bg: #FDF8EE;
+      --green: #1A7F5A;
+      --green-bg: #EBF8F3;
+      --orange: #D97706;
+      --orange-bg: #FFFBEB;
+      --red: #C0392B;
+      --red-bg: #FEF2F2;
+      --blue: #2563EB;
+      --blue-bg: #EFF6FF;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 4px 16px rgba(0, 0, 0, .08);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, .12);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.6
+    }
+
+    /* HEADER */
+    header {
+      background: var(--ink);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--ink)
+    }
+
+    .logo-text {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 20px;
+      color: var(--white)
+    }
+
+    .logo-text strong {
+      font-weight: 700;
+      color: var(--gold2)
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ghost);
+      text-decoration: none;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .nav-link:hover {
+      color: var(--white);
+      background: rgba(255, 255, 255, .1)
+    }
+
+    .nav-link.active {
+      color: var(--gold2);
+      background: rgba(201, 168, 76, .15)
+    }
+
+    .btn-new-ope {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 8px
+    }
+
+    .btn-new-ope:hover {
+      background: var(--gold);
+      color: var(--ink)
+    }
+
+    /* HERO */
+    .hero {
+      background: var(--ink2);
+      padding: 36px 32px 32px;
+      position: relative;
+      overflow: hidden
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(201, 168, 76, .1) 0%, transparent 70%);
+      pointer-events: none
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px
+    }
+
+    .hero-left .hero-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px
+    }
+
+    .hero-left h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 28px;
+      color: var(--white)
+    }
+
+    .hero-left h1 em {
+      font-style: italic;
+      color: var(--gold2)
+    }
+
+    .hero-left p {
+      color: var(--mist);
+      font-size: 13px;
+      margin-top: 4px
+    }
+
+    .btn-export {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: var(--ink);
+      border: none;
+      border-radius: 10px;
+      padding: 13px 24px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all .2s;
+      white-space: nowrap
+    }
+
+    .btn-export:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(201, 168, 76, .4)
+    }
+
+    .btn-export:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    /* LAYOUT */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 32px
+    }
+
+    /* SECTIONS */
+    .section-block {
+      margin-bottom: 24px
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--fog)
+    }
+
+    .section-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0
+    }
+
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--ink2)
+    }
+
+    .section-sub {
+      font-size: 12px;
+      color: var(--mist);
+      margin-top: 1px
+    }
+
+    /* PANEL */
+    .panel {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--fog);
+      overflow: hidden
+    }
+
+    .panel-body {
+      padding: 20px 24px
+    }
+
+    /* FORM */
+    .form-grid {
+      display: grid;
+      gap: 14px
+    }
+
+    .cols-2 {
+      grid-template-columns: 1fr 1fr
+    }
+
+    .cols-3 {
+      grid-template-columns: 1fr 1fr 1fr
+    }
+
+    .cols-4 {
+      grid-template-columns: 1fr 1fr 1fr 1fr
+    }
+
+    @media(max-width:700px) {
+
+      .cols-2,
+      .cols-3,
+      .cols-4 {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: .4px
+    }
+
+    .form-input {
+      border: 1.5px solid var(--ghost);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--white);
+      transition: border-color .15s;
+      width: 100%
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, .1)
+    }
+
+    select.form-input {
+      cursor: pointer
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.5
+    }
+
+    /* ÉTAT CHIPS */
+    .etat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px
+    }
+
+    .etat-chip {
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1.5px solid var(--ghost);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      color: var(--slate);
+      background: var(--white)
+    }
+
+    .etat-chip:hover {
+      border-color: var(--gold);
+      background: var(--gold-bg)
+    }
+
+    .etat-chip.bon {
+      border-color: var(--green);
+      background: var(--green-bg);
+      color: var(--green)
+    }
+
+    .etat-chip.moyen {
+      border-color: var(--orange);
+      background: var(--orange-bg);
+      color: var(--orange)
+    }
+
+    .etat-chip.mauvais {
+      border-color: var(--red);
+      background: var(--red-bg);
+      color: var(--red)
+    }
+
+    /* DVF SUMMARY */
+    .dvf-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px
+    }
+
+    .dvf-card {
+      background: var(--paper);
+      border-radius: 10px;
+      border: 1px solid var(--fog);
+      padding: 16px
+    }
+
+    .dvf-card-type {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--mist);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 6px
+    }
+
+    .dvf-card-price {
+      font-family: 'Fraunces', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1
+    }
+
+    .dvf-card-unit {
+      font-size: 12px;
+      color: var(--mist)
+    }
+
+    .dvf-card-range {
+      font-size: 11px;
+      color: var(--mist);
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace
+    }
+
+    .no-dvf {
+      text-align: center;
+      padding: 24px;
+      color: var(--mist);
+      font-size: 13px
+    }
+
+    /* RENTABILITE SUMMARY */
+    .rent-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px
+    }
+
+    @media(max-width:700px) {
+      .rent-kpis {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    .rent-kpi {
+      background: var(--paper);
+      border-radius: 10px;
+      padding: 14px;
+      border: 1px solid var(--fog)
+    }
+
+    .rent-kpi-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--mist);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 4px
+    }
+
+    .rent-kpi-val {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1
+    }
+
+    .rent-kpi-unit {
+      font-size: 11px;
+      color: var(--mist)
+    }
+
+    /* DECISION */
+    .decision-chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .dec-chip {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: 2px solid var(--ghost);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+      color: var(--slate)
+    }
+
+    .dec-chip[data-val="Offre à faire"] {
+      border-color: #A7F3D0
+    }
+
+    .dec-chip[data-val="Offre à faire"].active {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: var(--green)
+    }
+
+    .dec-chip[data-val="A étudier"] {
+      border-color: #FDE68A
+    }
+
+    .dec-chip[data-val="A étudier"].active {
+      background: var(--orange-bg);
+      border-color: var(--orange);
+      color: var(--orange)
+    }
+
+    .dec-chip[data-val="Non retenu"] {
+      border-color: #FECACA
+    }
+
+    .dec-chip[data-val="Non retenu"].active {
+      background: var(--red-bg);
+      border-color: var(--red);
+      color: var(--red)
+    }
+
+    /* IMPORT BANNER */
+    .import-banner {
+      background: var(--blue-bg);
+      border: 1.5px solid #BFDBFE;
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 20px;
+      flex-wrap: wrap
+    }
+
+    .import-text {
+      font-size: 13px;
+      color: var(--blue);
+      font-weight: 500
+    }
+
+    .import-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .btn-import {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1.5px solid #BFDBFE;
+      background: var(--white);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s
+    }
+
+    .btn-import:hover {
+      background: var(--blue-bg);
+      border-color: var(--blue)
+    }
+
+    /* LOADER */
+    .loader {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 17, 23, .75);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px
+    }
+
+    .loader.on {
+      display: flex
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(201, 168, 76, .2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin .8s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .loader-text {
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 500
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--ink2);
+      color: var(--white);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      box-shadow: var(--shadow-lg);
+      z-index: 600;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all .3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 380px
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .fade-up {
+      animation: fadeUp .35s ease forwards
+    }
+  </style>
+  <link rel="stylesheet" href="/dilimo-responsive.css">
+</head>
+
+<body>
+
+  <header>
+    <a href="/" class="logo">
+      <div class="logo-mark">D</div>
+      <div class="logo-text"><strong>Dilimo</strong></div>
+    </a>
+    <nav class="nav-links">
+      <button class="btn-new-ope" onclick="nouvelleOperation()" title="Nouvelle opération">🔄 NOUVELLE OPÉ.</button>
+      <a href="/" class="nav-link"><span style="font-size:14px;line-height:1">📊</span><span>SCAN</span></a>
+      <a href="/calculateur.html" class="nav-link"><span
+          style="font-size:14px;line-height:1">🧮</span><span>ROI</span></a>
+      <a href="/rapport.html" class="nav-link active"><span
+          style="font-size:14px;line-height:1">📋</span><span>VISITE</span></a>
+      <a href="/offre.html" class="nav-link"><span style="font-size:14px;line-height:1">📝</span><span>OFFRE</span></a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-label">📋 Dilimo — Marchand de biens</div>
+        <h1>Fiche de <em>visite</em></h1>
+        <p>DVF · Rentabilité · Notes terrain · Export PDF professionnel</p>
+      </div>
+      <button class="btn-outline-hero" onclick="resetRapport()"
+        style="padding:10px 18px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);background:transparent;color:var(--mist);font-size:13px;font-weight:600;cursor:pointer;margin-right:10px;">🔄
+        Réinit.</button>
+      <button class="btn-export" id="exportBtn" onclick="exportPDF()">
+        ⬇️ Exporter en PDF
+      </button>
+    </div>
+  </div>
+
+  <script src="/persistance.js"></script>
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    <div class="loader-text">Génération du PDF…</div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <div class="main" id="main-content">
+
+    <!-- IMPORT depuis les autres pages -->
+    <div class="import-banner" style="flex-wrap:wrap;">
+      <div class="import-text">💡 Importez automatiquement les données depuis vos autres analyses</div>
+      <div class="import-btns">
+        <button class="btn-import" onclick="importerDVF()">📊 Importer depuis DVF</button>
+        <button class="btn-import" onclick="importerCalculateur()">🧮 Importer depuis Rentabilité</button>
+      </div>
+    </div>
+
+    <!-- SECTION 1 — LE BIEN -->
+    <div class="section-block fade-up">
+      <div class="section-header">
+        <div class="section-icon" style="background:#EFF6FF">🏠</div>
+        <div>
+          <div class="section-title">Le bien</div>
+          <div class="section-sub">Informations générales</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="form-grid cols-2" style="margin-bottom:14px">
+            <div class="form-group" style="grid-column:1/-1">
+              <label class="form-label">Adresse complète</label>
+              <input type="text" class="form-input" id="adresse" placeholder="Ex : 12 rue de la Liberté, 21000 Dijon">
+            </div>
+          </div>
+          <div class="form-grid cols-4">
+            <div class="form-group">
+              <label class="form-label">Type de bien</label>
+              <select class="form-input" id="typeBien">
+                <option>Appartement</option>
+                <option>Maison</option>
+                <option>Immeuble</option>
+                <option>Terrain</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Surface (m²)</label>
+              <input type="number" class="form-input" id="surface" placeholder="80">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Année construction</label>
+              <input type="number" class="form-input" id="anneeConstruction" placeholder="1965">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Date de visite</label>
+              <input type="date" class="form-input" id="dateVisite">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2 — DONNÉES DVF -->
+    <div class="section-block fade-up">
+      <div class="section-header">
+        <div class="section-icon" style="background:#FDF8EE">📊</div>
+        <div>
+          <div class="section-title">Données de marché DVF</div>
+          <div class="section-sub">Importées depuis l'analyse DVF ou saisies manuellement</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-body">
+          <div id="dvfDisplay">
+            <div class="no-dvf">Cliquez sur "Importer depuis DVF" ou saisissez manuellement ci-dessous</div>
+          </div>
+          <div style="margin-top:14px">
+            <div class="form-grid cols-3">
+              <div class="form-group">
+                <label class="form-label">Prix médian appart. (€/m²)</label>
+                <input type="number" class="form-input" id="dvfAppart" placeholder="2 800">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Prix médian maison (€/m²)</label>
+                <input type="number" class="form-input" id="dvfMaison" placeholder="2 200">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nb transactions analysées</label>
+                <input type="number" class="form-input" id="dvfTotal" placeholder="150">
+              </div>
+            </div>
+            <div class="form-grid cols-2" style="margin-top:10px">
+              <div class="form-group">
+                <label class="form-label">Rayon analysé (km)</label>
+                <input type="number" class="form-input" id="dvfDist" placeholder="1" value="1">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Période (mois)</label>
+                <input type="number" class="form-input" id="dvfMois" placeholder="24" value="24">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3 — RENTABILITÉ -->
+    <div class="section-block fade-up">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--gold-bg)">💰</div>
+        <div>
+          <div class="section-title">Calcul de rentabilité</div>
+          <div class="section-sub">Importé depuis le calculateur ou saisi manuellement</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-body">
+          <div id="rentDisplay">
+            <div class="no-dvf">Cliquez sur "Importer depuis Rentabilité" ou saisissez ci-dessous</div>
+          </div>
+          <div style="margin-top:14px">
+            <div class="form-grid cols-3">
+              <div class="form-group">
+                <label class="form-label">Prix d'achat (€)</label>
+                <input type="number" class="form-input" id="rentPrixAchat" placeholder="150 000">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Prix de revente estimé (€)</label>
+                <input type="number" class="form-input" id="rentPrixRevente" placeholder="220 000">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Budget travaux (€)</label>
+                <input type="number" class="form-input" id="rentTravaux" placeholder="30 000">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Niveau travaux</label>
+                <select class="form-input" id="rentNiveauTravaux">
+                  <option>Légère</option>
+                  <option selected>Moyenne</option>
+                  <option>Lourde</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Marge brute (%)</label>
+                <input type="number" class="form-input" id="rentMargeBrute" placeholder="22.5" step="0.1">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Marge nette (%)</label>
+                <input type="number" class="form-input" id="rentMargeNette" placeholder="17.0" step="0.1">
+              </div>
+              <div class="form-group">
+                <label class="form-label">ROI annualisé (%)</label>
+                <input type="number" class="form-input" id="rentROI" placeholder="18.5" step="0.1">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Durée de portage (mois)</label>
+                <input type="number" class="form-input" id="rentPortage" placeholder="12">
+              </div>
+              <div class="form-group">
+                <label class="form-label">IS estimé (€)</label>
+                <input type="number" class="form-input" id="rentIS" placeholder="8 500">
+              </div>
+            </div>
+            <!-- Prix d'achat cibles -->
+            <div class="form-grid cols-3" style="margin-top:10px">
+              <div class="form-group">
+                <label class="form-label">Prix achat cible 20%</label>
+                <input type="number" class="form-input" id="rentPac20" placeholder="—">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Prix achat cible 25%</label>
+                <input type="number" class="form-input" id="rentPac25" placeholder="—">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Prix achat cible 30%</label>
+                <input type="number" class="form-input" id="rentPac30" placeholder="—">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4 — ÉTAT DU BIEN -->
+    <div class="section-block fade-up">
+      <div class="section-header">
+        <div class="section-icon" style="background:#F5F3FF">🔍</div>
+        <div>
+          <div class="section-title">État du bien — Observations terrain</div>
+          <div class="section-sub">Cliquez pour sélectionner l'état de chaque poste</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-body">
+          <div class="form-grid cols-2">
+            <!-- Poste état -->
+            <div id="etatPostes"></div>
+            <!-- Points forts / faibles -->
+            <div>
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label">✅ Points forts</label>
+                <textarea class="form-input" id="pointsForts"
+                  placeholder="Ex : Bonne exposition, quartier recherché, cave..."></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">⚠️ Points de vigilance</label>
+                <textarea class="form-input" id="pointsFaibles"
+                  placeholder="Ex : Toiture à refaire, électricité vétuste..."></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:14px">
+            <label class="form-label">📝 Notes libres de visite</label>
+            <textarea class="form-input" id="noteLibre" style="min-height:110px"
+              placeholder="Observations complémentaires, contexte, interlocuteurs rencontrés, ambiance du bien..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5 — DÉCISION -->
+    <div class="section-block fade-up">
+      <div class="section-header">
+        <div class="section-icon" style="background:var(--green-bg)">🎯</div>
+        <div>
+          <div class="section-title">Décision & Prochaines étapes</div>
+          <div class="section-sub">Conclusion de la visite</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-body">
+          <div style="margin-bottom:16px">
+            <label class="form-label" style="display:block;margin-bottom:8px">Statut de l'opération</label>
+            <div class="decision-chips">
+              <div class="dec-chip" data-val="Offre à faire" onclick="selectDecision(this)">✅ Offre à faire</div>
+              <div class="dec-chip active" data-val="A étudier" onclick="selectDecision(this)">⚡ À étudier</div>
+              <div class="dec-chip" data-val="Non retenu" onclick="selectDecision(this)">❌ Non retenu</div>
+            </div>
+          </div>
+          <div class="form-grid cols-2" style="margin-bottom:14px">
+            <div class="form-group">
+              <label class="form-label">Offre envisagée (€)</label>
+              <input type="number" class="form-input" id="offreEnvisagee" placeholder="140 000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Échéance</label>
+              <input type="text" class="form-input" id="echeance" placeholder="Ex : Offre avant le 15/04">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Prochaines étapes (une par ligne)</label>
+            <textarea class="form-input" id="prochainesEtapes"
+              placeholder="Contacter le notaire&#10;Obtenir devis toiture&#10;Vérifier PLU parcelle"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <script>
+    // ─── État des postes ──────────────────────────────────────────────────────────
+    const POSTES = [
+      { id: 'etatGeneral', label: 'État général' },
+      { id: 'toiture', label: 'Toiture / Charpente' },
+      { id: 'facade', label: 'Façade / Extérieur' },
+      { id: 'menuiseries', label: 'Menuiseries' },
+      { id: 'plomberie', label: 'Plomberie' },
+      { id: 'electricite', label: 'Électricité' },
+      { id: 'chauffage', label: 'Chauffage' },
+      { id: 'dpe', label: 'DPE estimé' },
+    ];
+    const ETATS = [
+      { val: 'bon', label: '✅ Bon', cls: 'bon' },
+      { val: 'moyen', label: '🟡 Moyen', cls: 'moyen' },
+      { val: 'mauvais', label: '❌ Mauvais', cls: 'mauvais' },
+    ];
+    const etatValues = {};
+
+    function buildPostes() {
+      const container = document.getElementById('etatPostes');
+      container.innerHTML = POSTES.map(p => {
+        const chips = p.id === 'dpe'
+          ? ['A', 'B', 'C', 'D', 'E', 'F', 'G'].map(l => `
+          <div class="etat-chip" data-poste="${p.id}" data-val="${l}"
+            onclick="selectEtat('${p.id}', this, '${l}')" style="font-family:monospace;font-weight:700">${l}</div>`).join('')
+          : ETATS.map(e => `
+          <div class="etat-chip" data-poste="${p.id}" data-val="${e.val}"
+            onclick="selectEtat('${p.id}', this, '${e.val}')">${e.label}</div>`).join('');
+        return `
+    <div style="margin-bottom:12px">
+      <div class="form-label" style="margin-bottom:5px">${p.label}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="etat-chips">${chips}</div>
+        <input type="text" class="form-input" id="note_${p.id}"
+          placeholder="Précisions…"
+          style="flex:1;min-width:120px;padding:5px 10px;font-size:12px;height:32px"
+          oninput="saveRapportState()">
+      </div>
+    </div>`;
+      }).join('');
+    }
+
+    function selectEtat(posteId, el, val) {
+      document.querySelectorAll(`[data-poste="${posteId}"]`).forEach(c => {
+        c.classList.remove('bon', 'moyen', 'mauvais');
+      });
+      el.classList.add(val);
+      etatValues[posteId] = val;
+    }
+
+    // ─── Décision ────────────────────────────────────────────────────────────────
+    let currentDecision = 'A étudier';
+    function selectDecision(el) {
+      document.querySelectorAll('.dec-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      currentDecision = el.dataset.val;
+    }
+
+    // ─── Import depuis DVF (localStorage) ────────────────────────────────────────
+    function importerDVF() {
+      const raw = localStorage.getItem('immopro_dvf_last');
+      if (!raw) { showToast('Lancez d\'abord une analyse DVF', '⚠️'); return; }
+      try {
+        const d = JSON.parse(raw);
+        // Pré-remplir les champs
+        if (d.adresse) document.getElementById('adresse').value = d.adresse;
+        if (d.total) document.getElementById('dvfTotal').value = d.total;
+        if (d.zone?.dist) document.getElementById('dvfDist').value = d.zone.dist;
+        if (d.zone?.months) document.getElementById('dvfMois').value = d.zone.months;
+
+        const am = d.appartements?.stats?.median;
+        const mm = d.maisons?.stats?.median;
+        if (am) document.getElementById('dvfAppart').value = am;
+        if (mm) document.getElementById('dvfMaison').value = mm;
+
+        // Affichage carte DVF
+        renderDVFSummary(d);
+        showToast('Données DVF importées ✓', '📊');
+      } catch (e) { showToast('Erreur lors de l\'import DVF', '❌'); }
+    }
+
+    function renderDVFSummary(d) {
+      const appart = d.appartements?.stats;
+      const maison = d.maisons?.stats;
+      const terrain = d.terrains?.stats;
+      const fmt = n => n ? parseInt(n).toLocaleString('fr-FR') : '—';
+
+      const cards = [
+        { type: '🏢 Appartements', s: appart, border: '#3B82F6' },
+        { type: '🏡 Maisons', s: maison, border: '#10B981' },
+        { type: '🌱 Terrains', s: terrain, border: '#C9A84C' },
+      ].filter(c => c.s);
+
+      if (!cards.length) return;
+
+      document.getElementById('dvfDisplay').innerHTML = `
+    <div class="dvf-summary" style="margin-bottom:14px">
+      ${cards.map(c => `
+        <div class="dvf-card" style="border-top:3px solid ${c.border}">
+          <div class="dvf-card-type">${c.type}</div>
+          <div class="dvf-card-price">${fmt(c.s.median)}</div>
+          <div class="dvf-card-unit">€/m² médian</div>
+          <div class="dvf-card-range">P10: ${fmt(c.s.p10)} — P90: ${fmt(c.s.p90)} €/m²</div>
+          <div class="dvf-card-range" style="margin-top:3px">${c.s.count} ventes analysées</div>
+        </div>`).join('')}
+    </div>`;
+    }
+
+    // ─── Import depuis calculateur (localStorage) ─────────────────────────────────
+    function importerCalculateur() {
+      const raw = localStorage.getItem('immopro_calc_last');
+      if (!raw) { showToast('Lancez d\'abord le calculateur de rentabilité', '⚠️'); return; }
+      try {
+        const d = JSON.parse(raw);
+        const f = id => document.getElementById(id);
+        if (d.prixAchat) f('rentPrixAchat').value = d.prixAchat;
+        if (d.prixRevente) f('rentPrixRevente').value = d.prixRevente;
+        if (d.travaux) f('rentTravaux').value = d.travaux;
+        if (d.margeBrutePct) f('rentMargeBrute').value = d.margeBrutePct.toFixed(1);
+        if (d.margeNettePct) f('rentMargeNette').value = d.margeNettePct.toFixed(1);
+        if (d.roiAnnuel) f('rentROI').value = d.roiAnnuel.toFixed(1);
+        if (d.portage) f('rentPortage').value = d.portage;
+        if (d.is) f('rentIS').value = d.is;
+        if (d.pac20) f('rentPac20').value = Math.round(d.pac20);
+        if (d.pac25) f('rentPac25').value = Math.round(d.pac25);
+        if (d.pac30) f('rentPac30').value = Math.round(d.pac30);
+        if (d.niveauTravaux) f('rentNiveauTravaux').value = d.niveauTravaux;
+
+        renderRentSummary(d);
+        showToast('Données rentabilité importées ✓', '🧮');
+      } catch (e) { showToast('Erreur lors de l\'import rentabilité', '❌'); }
+    }
+
+    function renderRentSummary(d) {
+      if (!d.prixRevente) return;
+      const fmt = n => n ? parseInt(n).toLocaleString('fr-FR') : '—';
+      const fmtpct = n => n ? parseFloat(n).toFixed(1) + '%' : '—';
+
+      const mnp = parseFloat(d.margeNettePct) || 0;
+      const col = mnp >= 15 ? '#1A7F5A' : mnp >= 8 ? '#D97706' : '#C0392B';
+
+      document.getElementById('rentDisplay').innerHTML = `
+    <div class="rent-kpis">
+      <div class="rent-kpi">
+        <div class="rent-kpi-label">Prix d'achat</div>
+        <div class="rent-kpi-val" style="font-size:18px">${fmt(d.prixAchat)}</div>
+        <div class="rent-kpi-unit">€</div>
+      </div>
+      <div class="rent-kpi">
+        <div class="rent-kpi-label">Marge brute</div>
+        <div class="rent-kpi-val" style="color:var(--gold)">${fmtpct(d.margeBrutePct)}</div>
+        <div class="rent-kpi-unit">${fmt(d.margeBrute)} €</div>
+      </div>
+      <div class="rent-kpi">
+        <div class="rent-kpi-label">Marge nette</div>
+        <div class="rent-kpi-val" style="color:${col}">${fmtpct(d.margeNettePct)}</div>
+        <div class="rent-kpi-unit">${fmt(d.margeNette)} €</div>
+      </div>
+      <div class="rent-kpi">
+        <div class="rent-kpi-label">ROI annualisé</div>
+        <div class="rent-kpi-val">${fmtpct(d.roiAnnuel)}</div>
+        <div class="rent-kpi-unit">${d.portage || '—'} mois</div>
+      </div>
+    </div>`;
+    }
+
+
+    // ─── Persistance formulaire VISITE ──────────────────────────────────────────
+    function saveRapportState() {
+      const ids = ['adresse', 'typeBien', 'surface', 'anneeConstruction', 'dateVisite',
+        'dvfAppart', 'dvfMaison', 'dvfTotal', 'dvfDist', 'dvfMois',
+        'rentPrixAchat', 'rentPrixRevente', 'rentTravaux', 'rentNiveauTravaux',
+        'rentMargeBrute', 'rentMargeNette', 'rentROI', 'rentPortage', 'rentIS',
+        'rentPac20', 'rentPac25', 'rentPac30',
+        'pointsForts', 'pointsFaibles', 'noteLibre',
+        'offreEnvisagee', 'echeance', 'prochainesEtapes',
+        'note_etatGeneral', 'note_toiture', 'note_facade', 'note_menuiseries',
+        'note_plomberie', 'note_electricite', 'note_chauffage', 'note_dpe'];
+      const state = {};
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) state[id] = el.value;
+      });
+      state['etatValues'] = { ...etatValues };
+      state['currentDecision'] = currentDecision;
+      try { localStorage.setItem('dilimo_visite_form', JSON.stringify(state)); } catch (e) { }
+    }
+
+    function loadRapportState() {
+      try {
+        const raw = localStorage.getItem('dilimo_visite_form');
+        if (!raw) return false;
+        const state = JSON.parse(raw);
+        Object.entries(state).forEach(([id, val]) => {
+          if (id === 'etatValues') {
+            Object.entries(val).forEach(([poste, etatVal]) => {
+              etatValues[poste] = etatVal;
+              const chip = document.querySelector(`[data-poste="${poste}"][data-val="${etatVal}"]`);
+          if (chip) { chip.classList.add(etatVal); }
+        // Note libre du poste
+        const noteEl = document.getElementById('note_' + poste);
+        // Sera chargée via les ids normaux
+        });
+        return;
+      }
+      if (id === 'currentDecision') {
+        currentDecision = val;
+        document.querySelectorAll('.dec-chip').forEach(ch => {
+          ch.classList.toggle('active', ch.dataset.val === val);
+        });
+        return;
+      }
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    });
+    return true;
+  } catch(e) { return false; }
+}
+
+function resetRapport() {
+  if (!confirm('Réinitialiser toutes les données de la fiche visite ?')) return;
+  try { localStorage.removeItem('dilimo_visite_form'); } catch(e) {}
+  location.reload();
+}
+
+// ─── Collecte des données ─────────────────────────────────────────────────────
+function collectData() {
+  const g = id => document.getElementById(id)?.value || '';
+  const gn = id => parseFloat(g(id)) || null;
+
+  return {
+    bien: {
+      adresse:           g('adresse'),
+      type:              g('typeBien'),
+      surface:           gn('surface'),
+      anneeConstruction: gn('anneeConstruction'),
+      dateVisite:        g('dateVisite'),
+    },
+    dvf: {
+      total:       gn('dvfTotal'),
+      dist:        gn('dvfDist'),
+      months:      gn('dvfMois'),
+      appartements:{ stats: { median: gn('dvfAppart') } },
+      maisons:     { stats: { median: gn('dvfMaison') } },
+    },
+    rentabilite: {
+      prixAchat:      gn('rentPrixAchat'),
+      prixRevente:    gn('rentPrixRevente'),
+      travaux:        gn('rentTravaux'),
+      niveauTravaux:  g('rentNiveauTravaux'),
+      margeBrute:     gn('rentPrixRevente') && gn('rentPrixAchat')
+                        ? gn('rentPrixRevente') - gn('rentPrixAchat') - (gn('rentTravaux')||0)
+                          - gn('rentPrixAchat')*0.03 - gn('rentPrixRevente')*0.04
+                        : null,
+      margeBrutePct:  gn('rentMargeBrute'),
+      margeNettePct:  gn('rentMargeNette'),
+      margeNette:     gn('rentPrixRevente') && gn('rentIS')
+                        ? (gn('rentPrixRevente') - gn('rentPrixAchat') - (gn('rentTravaux')||0)
+                           - gn('rentPrixAchat')*0.03 - gn('rentPrixRevente')*0.04) - gn('rentIS')
+                        : null,
+      fraisNotaire:   gn('rentPrixAchat') ? Math.round(gn('rentPrixAchat') * 0.03) : null,
+      fraisAgence:    gn('rentPrixRevente') ? Math.round(gn('rentPrixRevente') * 0.04) : null,
+      fraisFinanciers:null,
+      is:             gn('rentIS'),
+      roiAnnuel:      gn('rentROI'),
+      portage:        gn('rentPortage'),
+      prixAchatCibles:{ pac20: gn('rentPac20'), pac25: gn('rentPac25'), pac30: gn('rentPac30') },
+    },
+    notes: {
+      etat: Object.fromEntries(
+        Object.entries(etatValues).map(([k,v]) => [k, v]).concat(
+          ['etatGeneral','toiture','facade','menuiseries','plomberie','electricite','chauffage','dpe']
+            .map(id => [`${ id }_note`, document.getElementById('note_'+id)?.value || ''])
+        )
+      ),
+      points: {
+        forts:   g('pointsForts'),
+        faibles: g('pointsFaibles'),
+      },
+      noteLibre: g('noteLibre'),
+      decision: {
+        statut:           currentDecision,
+        offreEnvisagee:   gn('offreEnvisagee'),
+        echeance:         g('echeance'),
+        prochainesEtapes: g('prochainesEtapes'),
+      },
+    },
+  };
+}
+
+// ─── Export PDF ───────────────────────────────────────────────────────────────
+async function exportPDF() {
+  const btn = document.getElementById('exportBtn');
+  btn.disabled = true;
+  document.getElementById('loader').classList.add('on');
+
+  try {
+    const data = collectData();
+    const res  = await fetch('/api/rapport', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `Erreur ${ res.status }`);
+    }
+
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    const adresse = document.getElementById('adresse').value.slice(0, 40) || 'bien';
+    const date = new Date().toISOString().slice(0,10);
+    a.href     = url;
+    a.download = `rapport_${ adresse.replace(/[^a-zA-Z0-9]/g, '-') }_${ date }.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('PDF généré avec succès !', '✅');
+  } catch(e) {
+    console.error(e);
+    showToast('Erreur : ' + e.message, '❌');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('loader').classList.remove('on');
+  }
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg, icon='ℹ️') {
+  const t = document.getElementById('toast');
+  t.innerHTML = `< span > ${ icon }</span > ${ msg }`;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+buildPostes();
+// Auto-save sur chaque modification
+document.addEventListener('input', saveRapportState);
+document.addEventListener('change', saveRapportState);
+document.getElementById('dateVisite').value = new Date().toISOString().slice(0,10);
+
+// Essai d'import automatique si des données récentes existent
+window.addEventListener('load', () => {
+  const loaded = loadRapportState();
+  // Import auto seulement si pas de données sauvegardées
+  if (!loaded) {
+    if (localStorage.getItem('immopro_dvf_last'))  importerDVF();
+    if (localStorage.getItem('immopro_calc_last')) importerCalculateur();
+  }
+});
+  </script>
+</body>
+
+</html>

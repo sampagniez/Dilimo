@@ -1,0 +1,20 @@
+{
+  "name": "immopro",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "csv-parser": "^3.2.0",
+    "docx": "^9.6.1",
+    "express": "^5.2.1",
+    "node-fetch": "^3.3.2"
+  }
+}

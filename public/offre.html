@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>OFFRE — Dilimo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;1,300&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0D1117;
+      --ink2: #1C2536;
+      --slate: #4A5568;
+      --mist: #8896A8;
+      --ghost: #C8D3DC;
+      --fog: #E8EDF2;
+      --paper: #F4F6F8;
+      --white: #FFFFFF;
+      --gold: #C9A84C;
+      --gold2: #E8C876;
+      --gold-bg: #FDF8EE;
+      --green: #1A7F5A;
+      --green-bg: #EBF8F3;
+      --orange: #D97706;
+      --orange-bg: #FFFBEB;
+      --red: #C0392B;
+      --red-bg: #FEF2F2;
+      --blue: #2563EB;
+      --blue-bg: #EFF6FF;
+      --blue-light: #BFDBFE;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 4px 16px rgba(0, 0, 0, .08);
+      --shadow-lg: 0 8px 32px rgba(0, 0, 0, .12);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.6
+    }
+
+    /* HEADER */
+    header {
+      background: var(--ink);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--ink)
+    }
+
+    .logo-text {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 20px;
+      color: var(--white)
+    }
+
+    .logo-text strong {
+      font-weight: 700;
+      color: var(--gold2)
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .nav-link {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ghost);
+      text-decoration: none;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .nav-link:hover {
+      color: var(--white);
+      background: rgba(255, 255, 255, .1)
+    }
+
+    .nav-link.active {
+      color: var(--gold2);
+      background: rgba(201, 168, 76, .15)
+    }
+
+    .btn-new-ope {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: 8px
+    }
+
+    .btn-new-ope:hover {
+      background: var(--gold);
+      color: var(--ink)
+    }
+
+    /* HERO */
+    .hero {
+      background: var(--ink2);
+      padding: 36px 32px 32px;
+      position: relative;
+      overflow: hidden
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(201, 168, 76, .1) 0%, transparent 70%);
+      pointer-events: none
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px
+    }
+
+    .hero-left .hero-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px
+    }
+
+    .hero-left h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 28px;
+      color: var(--white)
+    }
+
+    .hero-left h1 em {
+      font-style: italic;
+      color: var(--gold2)
+    }
+
+    .hero-left p {
+      color: var(--mist);
+      font-size: 13px;
+      margin-top: 4px
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: var(--ink);
+      border: none;
+      border-radius: 10px;
+      padding: 12px 22px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all .2s;
+      white-space: nowrap
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(201, 168, 76, .4)
+    }
+
+    .btn-primary:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    .btn-secondary {
+      padding: 12px 22px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255, 255, 255, .15);
+      background: transparent;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all .2s
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, .08);
+      border-color: rgba(255, 255, 255, .3)
+    }
+
+    .btn-secondary:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    .btn-ghost {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(255, 255, 255, .1);
+      background: transparent;
+      color: var(--mist);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: .3px;
+      transition: all .15s
+    }
+
+    .btn-ghost:hover {
+      color: var(--white);
+      border-color: rgba(255, 255, 255, .2)
+    }
+
+    /* LAYOUT */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 32px;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+      align-items: start
+    }
+
+    @media(max-width:960px) {
+      .main {
+        grid-template-columns: 1fr !important;
+        padding: 16px !important;
+      }
+
+      .preview-sticky {
+        position: static !important;
+      }
+    }
+
+    @media(max-width:960px) {
+      .main {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* IMPORT BANNER */
+    .import-banner {
+      grid-column: 1/-1;
+      background: var(--blue-bg);
+      border: 1.5px solid var(--blue-light);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap
+    }
+
+    .import-text {
+      font-size: 13px;
+      color: var(--blue);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .import-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .btn-import {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1.5px solid var(--blue-light);
+      background: var(--white);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s
+    }
+
+    .btn-import:hover {
+      background: var(--blue-bg);
+      border-color: var(--blue)
+    }
+
+    /* PANEL */
+    .panel {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--fog);
+      overflow: hidden;
+      margin-bottom: 20px
+    }
+
+    .panel-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--fog);
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .panel-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink2)
+    }
+
+    .panel-sub {
+      font-size: 12px;
+      color: var(--mist);
+      margin-top: 1px
+    }
+
+    .panel-body {
+      padding: 20px 24px
+    }
+
+    /* FORM */
+    .fg {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 14px
+    }
+
+    .fg:last-child {
+      margin-bottom: 0
+    }
+
+    .fg-row {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 14px
+    }
+
+    .fg-row.c2 {
+      grid-template-columns: 1fr 1fr
+    }
+
+    .fg-row.c3 {
+      grid-template-columns: 1fr 1fr 1fr
+    }
+
+    @media(max-width:600px) {
+
+      .fg-row.c2,
+      .fg-row.c3 {
+        grid-template-columns: 1fr
+      }
+    }
+
+    label.lbl {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: .4px
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--mist);
+      margin-top: 2px
+    }
+
+    input.fi,
+    select.fi,
+    textarea.fi {
+      border: 1.5px solid var(--ghost);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--white);
+      transition: border-color .15s;
+      width: 100%
+    }
+
+    input.fi:focus,
+    select.fi:focus,
+    textarea.fi:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 168, 76, .1)
+    }
+
+    textarea.fi {
+      resize: vertical;
+      min-height: 72px
+    }
+
+    input.fi.auto {
+      background: var(--paper);
+      color: var(--slate);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px
+    }
+
+    /* CLAUSES */
+    .clause-item {
+      border: 1.5px solid var(--ghost);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      transition: border-color .2s
+    }
+
+    .clause-item.active {
+      border-color: var(--blue)
+    }
+
+    .clause-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      cursor: pointer;
+      user-select: none;
+      background: var(--white);
+      transition: background .15s
+    }
+
+    .clause-header:hover {
+      background: var(--paper)
+    }
+
+    .clause-item.active .clause-header {
+      background: var(--blue-bg)
+    }
+
+    .clause-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border: 2px solid var(--ghost);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .15s;
+      font-size: 13px
+    }
+
+    .clause-item.active .clause-check {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white
+    }
+
+    .clause-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink)
+    }
+
+    .clause-sub {
+      font-size: 11px;
+      color: var(--mist)
+    }
+
+    .clause-body {
+      padding: 0 18px;
+      max-height: 0;
+      overflow: hidden;
+      transition: all .3s ease
+    }
+
+    .clause-item.active .clause-body {
+      padding: 14px 18px;
+      max-height: 500px
+    }
+
+    /* PRÉVISUALISATION */
+    .preview-sticky {
+      position: sticky;
+      top: 84px
+    }
+
+    .preview-panel {
+      background: var(--ink2);
+      border-radius: var(--radius);
+      padding: 20px;
+      color: var(--white);
+      margin-bottom: 16px
+    }
+
+    .preview-title {
+      font-family: 'Fraunces', serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--gold2);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .preview-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+      font-size: 12px
+    }
+
+    .preview-row:last-child {
+      border-bottom: none
+    }
+
+    .preview-label {
+      color: var(--mist)
+    }
+
+    .preview-val {
+      color: var(--white);
+      font-weight: 500;
+      text-align: right;
+      max-width: 180px;
+      word-break: break-word
+    }
+
+    .preview-prix {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold2);
+      text-align: center;
+      padding: 12px 0;
+      line-height: 1
+    }
+
+    .preview-prix-label {
+      font-size: 11px;
+      color: var(--mist);
+      text-align: center;
+      margin-bottom: 10px
+    }
+
+    .clause-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px
+    }
+
+    .cpill {
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(37, 99, 235, .2);
+      color: #93C5FD
+    }
+
+    /* VALIDITÉ SLIDER */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .slider-row input[type=range] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 4px;
+      background: var(--fog);
+      border-radius: 2px
+    }
+
+    .slider-row input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer
+    }
+
+    .slider-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold);
+      min-width: 60px;
+      text-align: right
+    }
+
+    /* LOADER + TOAST */
+    .loader {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 17, 23, .75);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px
+    }
+
+    .loader.on {
+      display: flex
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(201, 168, 76, .2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin .8s linear infinite
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .loader-text {
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 500
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--ink2);
+      color: var(--white);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      box-shadow: var(--shadow-lg);
+      z-index: 600;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all .3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 380px
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .fade-up {
+      animation: fadeUp .35s ease forwards
+    }
+  </style>
+  <link rel="stylesheet" href="/dilimo-responsive.css">
+</head>
+
+<body>
+
+  <header>
+    <a href="/" class="logo">
+      <div class="logo-mark">D</div>
+      <div class="logo-text"><strong>Dilimo</strong></div>
+    </a>
+    <nav class="nav-links">
+      <button class="btn-new-ope" onclick="nouvelleOperation()" title="Nouvelle opération">🔄 NOUVELLE OPÉ.</button>
+      <a href="/" class="nav-link"><span style="font-size:14px;line-height:1">📊</span><span>SCAN</span></a>
+      <a href="/calculateur.html" class="nav-link"><span
+          style="font-size:14px;line-height:1">🧮</span><span>ROI</span></a>
+      <a href="/rapport.html" class="nav-link"><span
+          style="font-size:14px;line-height:1">📋</span><span>VISITE</span></a>
+      <a href="/offre.html" class="nav-link active"><span
+          style="font-size:14px;line-height:1">📝</span><span>OFFRE</span></a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-label">📝 Dilimo — Marchand de biens</div>
+        <h1>Offre d'<em>achat</em></h1>
+        <p>Renseignez les parties · Choisissez les clauses · Exportez en Word ou envoyez par mail</p>
+      </div>
+      <div class="hero-actions">
+        <button class="btn-ghost" onclick="resetOffre()">🔄 Réinit.</button>
+        <button class="btn-secondary" id="btnMail" onclick="envoyerMail()">✉️ Envoyer par mail</button>
+        <button class="btn-primary" id="btnWord" onclick="exportWord()">⬇️ Télécharger Word</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/persistance.js"></script>
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    <div class="loader-text" id="loaderText">Génération en cours…</div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <div class="main" id="main-content">
+
+    <!-- IMPORT -->
+    <div class="import-banner fade-up" style="grid-column:1/-1">
+      <div class="import-text">💡 Importez automatiquement depuis vos autres onglets</div>
+      <div class="import-btns">
+        <button class="btn-import" onclick="importerVisite()">📋 Depuis VISITE</button>
+        <button class="btn-import" onclick="importerROI()">🧮 Depuis ROI</button>
+        <button class="btn-import" onclick="importerSCAN()">📊 Depuis SCAN</button>
+      </div>
+    </div>
+
+    <!-- COL GAUCHE -->
+    <div>
+
+      <!-- ACQUÉREUR -->
+      <div class="panel fade-up">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:#EFF6FF">🏢</div>
+          <div>
+            <div class="panel-title">Acquéreur</div>
+            <div class="panel-sub">Vos coordonnées (pré-remplies si mémorisées)</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="fg-row c2">
+            <div class="fg"><label class="lbl">Nom / Raison sociale</label><input class="fi" id="acqNom"
+                placeholder="M. et Mme DUPONT" oninput="save();preview()"></div>
+            <div class="fg"><label class="lbl">Ville</label><input class="fi" id="acqVille" placeholder="Dijon"
+                oninput="save();preview()"></div>
+          </div>
+          <div class="fg"><label class="lbl">Adresse complète</label><input class="fi" id="acqAdresse"
+              placeholder="7 rue de la Liberté, 21000 Dijon" oninput="save();preview()"></div>
+          <div class="fg-row c2">
+            <div class="fg"><label class="lbl">Téléphone</label><input class="fi" id="acqTel"
+                placeholder="06 XX XX XX XX" oninput="save()"></div>
+            <div class="fg"><label class="lbl">Email</label><input class="fi" id="acqEmail" type="email"
+                placeholder="email@exemple.fr" oninput="save()"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BIEN -->
+      <div class="panel fade-up">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:var(--gold-bg)">🏠</div>
+          <div>
+            <div class="panel-title">Bien immobilier</div>
+            <div class="panel-sub">Description du bien objet de l'offre</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="fg"><label class="lbl">Adresse du bien</label><input class="fi" id="bienAdresse"
+              placeholder="133 rue de Paris, 89000 Auxerre" oninput="save();preview()"></div>
+          <div class="fg-row c3">
+            <div class="fg"><label class="lbl">Type</label>
+              <select class="fi" id="bienType" onchange="save();preview()">
+                <option>Appartement</option>
+                <option>Maison</option>
+                <option selected>Immeuble</option>
+                <option>Local commercial</option>
+                <option>Terrain</option>
+                <option>Fonds de commerce</option>
+              </select>
+            </div>
+            <div class="fg"><label class="lbl">Surface (m²)</label><input class="fi" id="bienSurface" placeholder="120"
+                oninput="save();preview()"></div>
+            <div class="fg"><label class="lbl">État d'occupation</label>
+              <select class="fi" id="bienOccupation" onchange="save()">
+                <option>Libre</option>
+                <option>Occupé</option>
+                <option>Partiellement occupé</option>
+              </select>
+            </div>
+          </div>
+          <div class="fg"><label class="lbl">Description complémentaire</label>
+            <textarea class="fi" id="bienDesc" placeholder="Ex : Immeuble R+2, 3 appartements, cave, cour..."
+              oninput="save()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- VENDEUR -->
+      <div class="panel fade-up">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:#F5F3FF">🤝</div>
+          <div>
+            <div class="panel-title">Vendeur</div>
+            <div class="panel-sub">Coordonnées du vendeur</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="fg-row c2">
+            <div class="fg"><label class="lbl">Nom / Raison sociale</label><input class="fi" id="venNom"
+                placeholder="M. MARTIN Jean" oninput="save();preview()"></div>
+            <div class="fg"><label class="lbl">Qualité</label>
+              <select class="fi" id="venQualite" onchange="save()">
+                <option>Propriétaire</option>
+                <option>Mandataire</option>
+                <option>Gérant</option>
+                <option>Notaire</option>
+              </select>
+            </div>
+          </div>
+          <div class="fg"><label class="lbl">Adresse</label><input class="fi" id="venAdresse"
+              placeholder="8 rue du Centre, 89000 Auxerre" oninput="save()"></div>
+        </div>
+      </div>
+
+      <!-- PRIX & VALIDITÉ -->
+      <div class="panel fade-up">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:var(--green-bg)">💶</div>
+          <div>
+            <div class="panel-title">Prix & Validité</div>
+            <div class="panel-sub">Le prix en lettres est calculé automatiquement</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="fg-row c2">
+            <div class="fg">
+              <label class="lbl">Prix proposé (€ net vendeur)</label>
+              <input class="fi" id="offrePrix" type="number" placeholder="180 000"
+                oninput="save();preview();updatePrixLettres()">
+              <span class="hint">Pré-rempli depuis ROI si disponible</span>
+            </div>
+            <div class="fg">
+              <label class="lbl">Prix en lettres</label>
+              <input class="fi auto" id="offrePrixLettres" readonly placeholder="Calculé automatiquement">
+            </div>
+          </div>
+          <div class="fg">
+            <label class="lbl">Durée de validité de l'offre</label>
+            <div class="slider-row">
+              <input type="range" id="validiteSlider" min="3" max="21" value="8" oninput="updateValidite()">
+              <span class="slider-val" id="validiteLabel">8 jours</span>
+            </div>
+            <span class="hint" id="validiteDate">Valable jusqu'au —</span>
+          </div>
+          <div class="fg">
+            <label class="lbl">Référence dossier (optionnel)</label>
+            <input class="fi" id="offreRef" placeholder="Ex: DIJON-2026-003" oninput="save()">
+          </div>
+        </div>
+      </div>
+
+      <!-- CLAUSES SUSPENSIVES -->
+      <div class="panel fade-up">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:#EFF6FF">⚖️</div>
+          <div>
+            <div class="panel-title">Clauses suspensives</div>
+            <div class="panel-sub">Cliquez pour activer / désactiver chaque clause</div>
+          </div>
+        </div>
+        <div class="panel-body">
+
+          <!-- Financement -->
+          <div class="clause-item" id="clause-financement">
+            <div class="clause-header" onclick="toggleClause('financement')">
+              <div class="clause-check" id="check-financement"></div>
+              <div>
+                <div class="clause-title">Condition suspensive de financement</div>
+                <div class="clause-sub">Art. L313-41 Code de la consommation — Prêt bancaire</div>
+              </div>
+            </div>
+            <div class="clause-body">
+              <div class="fg-row c3">
+                <div class="fg"><label class="lbl">Délai (jours)</label><input class="fi" id="finDelai" value="45"
+                    oninput="save()"></div>
+                <div class="fg"><label class="lbl">Montant du prêt (€)</label><input class="fi" id="finMontant"
+                    placeholder="Optionnel" oninput="save()"></div>
+                <div class="fg"><label class="lbl">Taux max (%)</label><input class="fi" id="finTaux"
+                    placeholder="Optionnel" oninput="save()"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pré-commercialisation -->
+          <div class="clause-item" id="clause-precommercia">
+            <div class="clause-header" onclick="toggleClause('precommercia')">
+              <div class="clause-check" id="check-precommercia"></div>
+              <div>
+                <div class="clause-title">Clause de pré-commercialisation</div>
+                <div class="clause-sub">Autorisation de vendre avant l'acte authentique</div>
+              </div>
+            </div>
+            <div class="clause-body">
+              <div class="fg-row c2">
+                <div class="fg">
+                  <label class="lbl">Nombre de lots minimum à vendre</label>
+                  <input class="fi" id="preLots" type="number" placeholder="Ex : 2" oninput="save()">
+                </div>
+                <div class="fg">
+                  <label class="lbl">Type de lots</label>
+                  <input class="fi" id="preLotType" placeholder="Ex : appartements" oninput="save()">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Jouissance anticipée -->
+          <div class="clause-item" id="clause-jouissance">
+            <div class="clause-header" onclick="toggleClause('jouissance')">
+              <div class="clause-check" id="check-jouissance"></div>
+              <div>
+                <div class="clause-title">Clause de jouissance anticipée</div>
+                <div class="clause-sub">Accès au bien avant l'acte pour devis et métrés</div>
+              </div>
+            </div>
+            <div class="clause-body">
+              <div class="fg">
+                <label class="lbl">Autorisation de travaux préparatoires ?</label>
+                <select class="fi" id="jouTravaux" onchange="save()">
+                  <option value="0">Non — accès devis et métrés uniquement</option>
+                  <option value="1">Oui — avec accord écrit du vendeur</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Urbanisme -->
+          <div class="clause-item" id="clause-urbanisme">
+            <div class="clause-header" onclick="toggleClause('urbanisme')">
+              <div class="clause-check" id="check-urbanisme"></div>
+              <div>
+                <div class="clause-title">Condition suspensive d'urbanisme</div>
+                <div class="clause-sub">PLU, servitudes, conformité des surfaces</div>
+              </div>
+            </div>
+            <div class="clause-body">
+              <div class="fg">
+                <label class="lbl">Précisions complémentaires (optionnel)</label>
+                <textarea class="fi" id="urbPrecisions"
+                  placeholder="Ex : Obtention d'un permis de construire, CU opérationnel..."
+                  oninput="save()"></textarea>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- NOTAIRES -->
+      <div class="panel fade-up">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:#FDF8EE">⚖️</div>
+          <div>
+            <div class="panel-title">Intervenants</div>
+            <div class="panel-sub">Notaires et intervenants de la transaction</div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="fg-row c2">
+            <div class="fg">
+              <label class="lbl">Notaire de l'acquéreur</label>
+              <input class="fi" id="notAcq" placeholder="Me DUPONT à Dijon" oninput="save()">
+            </div>
+            <div class="fg">
+              <label class="lbl">Notaire du vendeur</label>
+              <input class="fi" id="notVen" placeholder="À définir" oninput="save()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /col gauche -->
+
+    <!-- COL DROITE : PRÉVISUALISATION -->
+    <div class="preview-sticky">
+
+      <div class="preview-panel">
+        <div class="preview-title">👁️ Aperçu de l'offre</div>
+        <div class="preview-prix" id="prevPrix">— €</div>
+        <div class="preview-prix-label">Prix proposé net vendeur</div>
+        <div id="prevRows"></div>
+        <div class="clause-pills" id="prevClauses"></div>
+      </div>
+
+      <!-- Actions rapides -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:var(--green-bg)">🚀</div>
+          <div>
+            <div class="panel-title">Exporter & Envoyer</div>
+          </div>
+        </div>
+        <div class="panel-body" style="display:flex;flex-direction:column;gap:10px">
+          <button class="btn-primary" style="width:100%;justify-content:center" onclick="exportWord()">
+            ⬇️ Télécharger en Word (.docx)
+          </button>
+          <button onclick="envoyerMail()"
+            style="width:100%;justify-content:center;padding:12px 22px;border-radius:10px;border:1.5px solid var(--ghost);background:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;"
+            onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-bg)'"
+            onmouseout="this.style.borderColor='var(--ghost)';this.style.background='var(--white)'">
+            ✉️ Envoyer par email
+          </button>
+          <div style="font-size:11px;color:var(--mist);text-align:center;padding-top:4px">
+            L'email ouvre votre client mail avec le document en pièce jointe
+          </div>
+        </div>
+      </div>
+
+      <!-- Checklist -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-icon" style="background:var(--green-bg)">✅</div>
+          <div>
+            <div class="panel-title">Checklist avant envoi</div>
+          </div>
+        </div>
+        <div class="panel-body" id="checklist" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
+    </div>
+
+  </div><!-- /main -->
+
+  <script>
+    // ─── État clauses ──────────────────────────────────────────────────────────────
+    const clausesActives = { financement: false, precommercia: false, jouissance: false, urbanisme: false };
+
+    function toggleClause(id) {
+      clausesActives[id] = !clausesActives[id];
+      const item = document.getElementById('clause-' + id);
+      const check = document.getElementById('check-' + id);
+      item.classList.toggle('active', clausesActives[id]);
+      check.textContent = clausesActives[id] ? '✓' : '';
+      save(); preview(); updateChecklist();
+    }
+
+    // ─── Validité slider ──────────────────────────────────────────────────────────
+    function updateValidite() {
+      const v = parseInt(document.getElementById('validiteSlider').value);
+      document.getElementById('validiteLabel').textContent = v + ' jour' + (v > 1 ? 's' : '');
+      const d = new Date(); d.setDate(d.getDate() + v);
+      document.getElementById('validiteDate').textContent =
+        'Valable jusqu\'au ' + d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      save(); preview();
+    }
+
+    // ─── Prix en lettres ──────────────────────────────────────────────────────────
+    function enLettres(n) {
+      const u = ['', 'un', 'deux', 'trois', 'quatre', 'cinq', 'six', 'sept', 'huit', 'neuf',
+        'dix', 'onze', 'douze', 'treize', 'quatorze', 'quinze', 'seize', 'dix-sept', 'dix-huit', 'dix-neuf'];
+      const t = ['', '', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante', 'quatre-vingt', 'quatre-vingt'];
+      if (!n || isNaN(n)) return '';
+      n = parseInt(n);
+      if (n === 0) return 'zéro';
+      let r = '';
+      if (n >= 1000000) { r += enLettres(Math.floor(n / 1000000)) + ' million' + (Math.floor(n / 1000000) > 1 ? 's' : '') + ' '; n %= 1000000; }
+      if (n >= 1000) { const m = Math.floor(n / 1000); r += (m === 1 ? '' : enLettres(m) + '-') + 'mille '; n %= 1000; }
+      if (n >= 100) { const h = Math.floor(n / 100); r += (h === 1 ? 'cent' : u[h] + '-cent') + (n % 100 === 0 && h > 1 ? 's' : ' '); n %= 100; }
+      if (n > 0) {
+        if (n < 20) r += u[n];
+        else {
+          const tens = Math.floor(n / 10), unit = n % 10;
+          if (tens === 7 || tens === 9) r += t[tens] + '-' + u[10 + (n % 10)];
+          else r += t[tens] + (unit > 0 ? (unit === 1 && tens !== 8 ? '-et-' + u[unit] : '-' + u[unit]) : (tens === 8 ? 's' : ''));
+        }
+      }
+      return r.trim().replace(/\s+/g, ' ');
+    }
+
+    function updatePrixLettres() {
+      const n = parseFloat(document.getElementById('offrePrix').value);
+      document.getElementById('offrePrixLettres').value = n ? enLettres(n) + ' euros' : '';
+      preview(); updateChecklist();
+    }
+
+    // ─── Aperçu ────────────────────────────────────────────────────────────────────
+    function preview() {
+      const g = id => document.getElementById(id)?.value || '';
+      const prix = parseFloat(g('offrePrix'));
+      document.getElementById('prevPrix').textContent = prix ? parseInt(prix).toLocaleString('fr-FR') + ' €' : '— €';
+
+      const rows = [
+        ['Acquéreur', g('acqNom')],
+        ['Bien', g('bienAdresse')],
+        ['Type', g('bienType')],
+        ['Vendeur', g('venNom')],
+        ['Validité', document.getElementById('validiteLabel')?.textContent],
+      ].filter(r => r[1]);
+
+      document.getElementById('prevRows').innerHTML = rows.map(r =>
+        `<div class="preview-row"><span class="preview-label">${r[0]}</span><span class="preview-val">${r[1]}</span></div>`
+      ).join('');
+
+      const pills = Object.entries(clausesActives).filter(([, v]) => v).map(([k]) => {
+        const labels = { financement: 'Financement', precommercia: 'Pré-commer.', jouissance: 'Jouissance', urbanisme: 'Urbanisme' };
+        return `<span class="cpill">${labels[k]}</span>`;
+      }).join('');
+      document.getElementById('prevClauses').innerHTML = pills;
+    }
+
+    // ─── Checklist ─────────────────────────────────────────────────────────────────
+    function updateChecklist() {
+      const g = id => document.getElementById(id)?.value?.trim() || '';
+      const checks = [
+        { ok: !!g('acqNom'), label: 'Nom de l\'acquéreur' },
+        { ok: !!g('bienAdresse'), label: 'Adresse du bien' },
+        { ok: !!g('venNom'), label: 'Nom du vendeur' },
+        { ok: !!g('offrePrix'), label: 'Prix d\'offre' },
+        { ok: !!g('notAcq'), label: 'Notaire de l\'acquéreur' },
+        { ok: Object.values(clausesActives).some(v => v), label: 'Au moins une clause suspensive', warn: true },
+      ];
+      document.getElementById('checklist').innerHTML = checks.map(c => {
+        const icon = c.ok ? '✅' : (c.warn ? '💡' : '⚠️');
+        const col = c.ok ? 'var(--green)' : (c.warn ? 'var(--orange)' : 'var(--red)');
+        return `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:${col}">
+      <span>${icon}</span><span>${c.label}</span>
+    </div>`;
+      }).join('');
+    }
+
+    // ─── Collecte données ─────────────────────────────────────────────────────────
+    function collectData() {
+      const g = id => document.getElementById(id)?.value?.trim() || null;
+      const gn = id => parseFloat(document.getElementById(id)?.value) || null;
+      return {
+        acquereur: { nom: g('acqNom'), adresse: g('acqAdresse'), ville: g('acqVille'), telephone: g('acqTel'), email: g('acqEmail') },
+        bien: { adresse: g('bienAdresse'), type: g('bienType'), surface: g('bienSurface'), occupation: g('bienOccupation'), descriptionComplementaire: g('bienDesc') },
+        vendeur: { nom: g('venNom'), adresse: g('venAdresse'), qualite: g('venQualite') },
+        offre: { prix: gn('offrePrix'), validite: parseInt(document.getElementById('validiteSlider').value), reference: g('offreRef') },
+        clauses: {
+          financement: clausesActives.financement ? { delai: g('finDelai') || 45, montant: gn('finMontant'), taux: g('finTaux') } : null,
+          precommercia: clausesActives.precommercia ? { lotsMin: g('preLots'), lotType: g('preLotType') } : null,
+          jouissance: clausesActives.jouissance ? { travaux: document.getElementById('jouTravaux')?.value === '1' } : null,
+          urbanisme: clausesActives.urbanisme ? { precisions: g('urbPrecisions') } : null,
+        },
+        notaire: { acquereur: g('notAcq'), vendeur: g('notVen') },
+      };
+    }
+
+    // ─── Export Word ───────────────────────────────────────────────────────────────
+    async function exportWord() {
+      setLoading(true, 'Génération du document Word…');
+      try {
+        const res = await fetch('/api/offre', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(collectData()),
+        });
+        if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || `Erreur ${res.status}`); }
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const adresse = (document.getElementById('bienAdresse')?.value || 'offre').replace(/[^a-zA-Z0-9]/g, '-').slice(0, 30);
+        a.href = url; a.download = `offre_achat_${adresse}_${new Date().toISOString().slice(0, 10)}.docx`;
+        a.click(); URL.revokeObjectURL(url);
+        showToast('Document Word généré !', '✅');
+      } catch (e) { showToast('Erreur : ' + e.message, '❌'); console.error(e); }
+      finally { setLoading(false); }
+    }
+
+    // ─── Envoi mail ───────────────────────────────────────────────────────────────
+    async function envoyerMail() {
+      const d = collectData();
+      const prix = d.offre.prix ? parseInt(d.offre.prix).toLocaleString('fr-FR') + ' €' : '___';
+      const validite = d.offre.validite || 8;
+      const limitDate = (() => { const dt = new Date(); dt.setDate(dt.getDate() + validite); return dt.toLocaleDateString('fr-FR'); })();
+
+      const sujet = encodeURIComponent(`Offre d'achat — ${d.bien.adresse || 'Bien immobilier'} — ${prix}`);
+      const corps = encodeURIComponent(
+        `Madame, Monsieur,
+
+Nous avons le plaisir de vous soumettre notre offre d'achat pour le bien situé au :
+${d.bien.adresse || '___'}
+
+Prix proposé : ${prix} net vendeur
+
+Cette offre est valable jusqu'au ${limitDate}.
+
+${Object.values(d.clauses).filter(Boolean).length > 0 ?
+          'Elle est soumise aux conditions suspensives suivantes :\n' +
+          (d.clauses.financement ? '- Obtention de financement bancaire\n' : '') +
+          (d.clauses.precommercia ? '- Pré-commercialisation du bien\n' : '') +
+          (d.clauses.jouissance ? '- Jouissance anticipée\n' : '') +
+          (d.clauses.urbanisme ? '- Conditions d\'urbanisme\n' : '') : ''}
+Veuillez trouver ci-joint le document d'offre d'achat complet.
+
+Cordialement,
+${d.acquereur.nom || ''}
+${d.acquereur.telephone || ''}
+${d.acquereur.email || ''}`
+      );
+
+      const dest = encodeURIComponent(d.acquereur.email || '');
+      window.location.href = `mailto:${dest}?subject=${sujet}&body=${corps}`;
+      showToast('Client mail ouvert — n\'oubliez pas de joindre le .docx', '✉️');
+    }
+
+    // ─── Persistance ──────────────────────────────────────────────────────────────
+    const FIELDS = ['acqNom', 'acqVille', 'acqAdresse', 'acqTel', 'acqEmail',
+      'bienAdresse', 'bienType', 'bienSurface', 'bienOccupation', 'bienDesc',
+      'venNom', 'venAdresse', 'venQualite', 'offrePrix', 'offreRef',
+      'finDelai', 'finMontant', 'finTaux', 'preLots', 'preLotType',
+      'jouTravaux', 'urbPrecisions', 'notAcq', 'notVen', 'validiteSlider'];
+
+    function save() {
+      const state = {};
+      FIELDS.forEach(id => { const el = document.getElementById(id); if (el) state[id] = el.type === 'checkbox' ? el.checked : el.value; });
+      state.clauses = { ...clausesActives };
+      try { localStorage.setItem('dilimo_offre_form', JSON.stringify(state)); } catch (e) { }
+    }
+
+    function load() {
+      try {
+        const raw = localStorage.getItem('dilimo_offre_form');
+        if (!raw) return false;
+        const state = JSON.parse(raw);
+        FIELDS.forEach(id => {
+          if (state[id] === undefined) return;
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.type === 'checkbox' ? (el.checked = state[id]) : (el.value = state[id]);
+        });
+        if (state.clauses) {
+          Object.entries(state.clauses).forEach(([k, v]) => {
+            if (v) { clausesActives[k] = false; toggleClause(k); }
+          });
+        }
+        return true;
+      } catch (e) { return false; }
+    }
+
+    function resetOffre() {
+      if (!confirm('Réinitialiser toute l\'offre ?')) return;
+      try { localStorage.removeItem('dilimo_offre_form'); } catch (e) { }
+      location.reload();
+    }
+
+    // ─── Imports depuis autres onglets ────────────────────────────────────────────
+    function importerVisite() {
+      try {
+        const raw = localStorage.getItem('dilimo_visite_form');
+        if (!raw) { showToast('Complétez d\'abord l\'onglet VISITE', '⚠️'); return; }
+        const d = JSON.parse(raw);
+        if (d.adresse) document.getElementById('bienAdresse').value = d.adresse;
+        if (d.typeBien) document.getElementById('bienType').value = d.typeBien;
+        if (d.surface) document.getElementById('bienSurface').value = d.surface;
+        save(); preview(); updateChecklist();
+        showToast('Données VISITE importées', '📋');
+      } catch (e) { showToast('Erreur import VISITE', '❌'); }
+    }
+
+    function importerROI() {
+      try {
+        const raw = localStorage.getItem('immopro_calc_last');
+        if (!raw) { showToast('Lancez d\'abord un calcul dans l\'onglet ROI', '⚠️'); return; }
+        const d = JSON.parse(raw);
+        // Suggère le prix d'achat cible à 25% de marge
+        const prix = d.pac25 || d.prixAchat;
+        if (prix) { document.getElementById('offrePrix').value = Math.round(prix); updatePrixLettres(); }
+        save(); preview(); updateChecklist();
+        showToast('Prix cible 25% importé depuis ROI', '🧮');
+      } catch (e) { showToast('Erreur import ROI', '❌'); }
+    }
+
+    function importerSCAN() {
+      try {
+        const raw = localStorage.getItem('immopro_dvf_last');
+        if (!raw) { showToast('Lancez d\'abord une analyse dans l\'onglet SCAN', '⚠️'); return; }
+        const d = JSON.parse(raw);
+        if (d.adresse) document.getElementById('bienAdresse').value = d.adresse;
+        save(); preview(); updateChecklist();
+        showToast('Adresse importée depuis SCAN', '📊');
+      } catch (e) { showToast('Erreur import SCAN', '❌'); }
+    }
+
+    // ─── Pré-remplissage acquéreur mémorisé ─────────────────────────────────────
+    function chargerAcquereurDefaut() {
+      // Si le formulaire est vide, proposer de mémoriser l'acquéreur
+      const nom = document.getElementById('acqNom').value;
+      if (nom) return;
+      try {
+        const raw = localStorage.getItem('dilimo_acquereur');
+        if (!raw) return;
+        const a = JSON.parse(raw);
+        document.getElementById('acqNom').value = a.nom || '';
+        document.getElementById('acqVille').value = a.ville || '';
+        document.getElementById('acqAdresse').value = a.adresse || '';
+        document.getElementById('acqTel').value = a.tel || '';
+        document.getElementById('acqEmail').value = a.email || '';
+      } catch (e) { }
+    }
+
+    // Bouton mémoriser acquéreur
+    function memoriserAcquereur() {
+      const g = id => document.getElementById(id)?.value?.trim() || '';
+      localStorage.setItem('dilimo_acquereur', JSON.stringify({
+        nom: g('acqNom'), ville: g('acqVille'), adresse: g('acqAdresse'), tel: g('acqTel'), email: g('acqEmail')
+      }));
+      showToast('Coordonnées acquéreur mémorisées', '✅');
+    }
+
+    // ─── Utils ─────────────────────────────────────────────────────────────────────
+    function setLoading(v, txt = '') {
+      document.getElementById('loader').classList.toggle('on', v);
+      if (txt) document.getElementById('loaderText').textContent = txt;
+    }
+    function showToast(msg, icon = 'ℹ️') {
+      const t = document.getElementById('toast');
+      t.innerHTML = `<span>${icon}</span> ${msg}`;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    // ─── Init ──────────────────────────────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      updateValidite();
+      const loaded = load();
+      if (!loaded) {
+        chargerAcquereurDefaut();
+        // Auto-import depuis les autres onglets si dispo
+        importerVisite();
+        importerROI();
+      }
+      updatePrixLettres();
+      preview();
+      updateChecklist();
+    });
+
+    // Auto-save et mémorisation acquéreur
+    document.addEventListener('input', () => { save(); preview(); updateChecklist(); });
+    document.addEventListener('change', () => { save(); preview(); updateChecklist(); });
+
+    // Mémoriser acquéreur automatiquement quand on remplit les champs
+    ['acqNom', 'acqVille', 'acqAdresse', 'acqTel', 'acqEmail'].forEach(id => {
+      document.getElementById(id)?.addEventListener('blur', memoriserAcquereur);
+    });
+  </script>
+</body>
+
+</html>
