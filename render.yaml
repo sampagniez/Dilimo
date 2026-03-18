@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: immoanalytics-pro
+    env: docker
+    plan: free
+    region: frankfurt # Optionnel, le plus proche pour la France
+    dockerCommand: "npm start"
+    envVars:
+      - key: PORT
+        value: 3000
