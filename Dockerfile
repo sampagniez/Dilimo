@@ -1,11 +1,15 @@
 # Utiliser l'image Debian légère avec Node.js
 FROM node:20-bullseye-slim
 
-# Mise à jour et installation de Python 3 et pip
+# Mise à jour et installation de Python 3 et venv
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
-    python3-pip \
+    python3-venv \
     && rm -rf /var/lib/apt/lists/*
+
+# Création de l'environnement virtuel et ajout au PATH
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Définir le répertoire de travail
 WORKDIR /app
@@ -16,12 +20,12 @@ COPY requirements.txt ./
 
 # Installer les dépendances
 RUN npm install --production
-RUN pip3 install --no-cache-dir -r requirements.txt --break-system-packages
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier le reste de l'application (en ignorant les fichiers dans .dockerignore)
+# Copier le reste de l'application
 COPY . .
 
-# Exposer le port du serveur (Défini par la variable PORT, par défaut 3000)
+# Exposer le port du serveur
 ENV PORT=3000
 EXPOSE $PORT
 
