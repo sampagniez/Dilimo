@@ -1163,160 +1163,160 @@
             Object.entries(val).forEach(([poste, etatVal]) => {
               etatValues[poste] = etatVal;
               const chip = document.querySelector(`[data-poste="${poste}"][data-val="${etatVal}"]`);
-          if (chip) { chip.classList.add(etatVal); }
-        // Note libre du poste
-        const noteEl = document.getElementById('note_' + poste);
-        // Sera chargée via les ids normaux
+              if (chip) { chip.classList.add(etatVal); }
+              // Note libre du poste
+              const noteEl = document.getElementById('note_' + poste);
+              // Sera chargée via les ids normaux
+            });
+            return;
+          }
+          if (id === 'currentDecision') {
+            currentDecision = val;
+            document.querySelectorAll('.dec-chip').forEach(ch => {
+              ch.classList.toggle('active', ch.dataset.val === val);
+            });
+            return;
+          }
+          const el = document.getElementById(id);
+          if (el) el.value = val;
         });
-        return;
-      }
-      if (id === 'currentDecision') {
-        currentDecision = val;
-        document.querySelectorAll('.dec-chip').forEach(ch => {
-          ch.classList.toggle('active', ch.dataset.val === val);
-        });
-        return;
-      }
-      const el = document.getElementById(id);
-      if (el) el.value = val;
-    });
-    return true;
-  } catch(e) { return false; }
-}
-
-function resetRapport() {
-  if (!confirm('Réinitialiser toutes les données de la fiche visite ?')) return;
-  try { localStorage.removeItem('dilimo_visite_form'); } catch(e) {}
-  location.reload();
-}
-
-// ─── Collecte des données ─────────────────────────────────────────────────────
-function collectData() {
-  const g = id => document.getElementById(id)?.value || '';
-  const gn = id => parseFloat(g(id)) || null;
-
-  return {
-    bien: {
-      adresse:           g('adresse'),
-      type:              g('typeBien'),
-      surface:           gn('surface'),
-      anneeConstruction: gn('anneeConstruction'),
-      dateVisite:        g('dateVisite'),
-    },
-    dvf: {
-      total:       gn('dvfTotal'),
-      dist:        gn('dvfDist'),
-      months:      gn('dvfMois'),
-      appartements:{ stats: { median: gn('dvfAppart') } },
-      maisons:     { stats: { median: gn('dvfMaison') } },
-    },
-    rentabilite: {
-      prixAchat:      gn('rentPrixAchat'),
-      prixRevente:    gn('rentPrixRevente'),
-      travaux:        gn('rentTravaux'),
-      niveauTravaux:  g('rentNiveauTravaux'),
-      margeBrute:     gn('rentPrixRevente') && gn('rentPrixAchat')
-                        ? gn('rentPrixRevente') - gn('rentPrixAchat') - (gn('rentTravaux')||0)
-                          - gn('rentPrixAchat')*0.03 - gn('rentPrixRevente')*0.04
-                        : null,
-      margeBrutePct:  gn('rentMargeBrute'),
-      margeNettePct:  gn('rentMargeNette'),
-      margeNette:     gn('rentPrixRevente') && gn('rentIS')
-                        ? (gn('rentPrixRevente') - gn('rentPrixAchat') - (gn('rentTravaux')||0)
-                           - gn('rentPrixAchat')*0.03 - gn('rentPrixRevente')*0.04) - gn('rentIS')
-                        : null,
-      fraisNotaire:   gn('rentPrixAchat') ? Math.round(gn('rentPrixAchat') * 0.03) : null,
-      fraisAgence:    gn('rentPrixRevente') ? Math.round(gn('rentPrixRevente') * 0.04) : null,
-      fraisFinanciers:null,
-      is:             gn('rentIS'),
-      roiAnnuel:      gn('rentROI'),
-      portage:        gn('rentPortage'),
-      prixAchatCibles:{ pac20: gn('rentPac20'), pac25: gn('rentPac25'), pac30: gn('rentPac30') },
-    },
-    notes: {
-      etat: Object.fromEntries(
-        Object.entries(etatValues).map(([k,v]) => [k, v]).concat(
-          ['etatGeneral','toiture','facade','menuiseries','plomberie','electricite','chauffage','dpe']
-            .map(id => [`${ id }_note`, document.getElementById('note_'+id)?.value || ''])
-        )
-      ),
-      points: {
-        forts:   g('pointsForts'),
-        faibles: g('pointsFaibles'),
-      },
-      noteLibre: g('noteLibre'),
-      decision: {
-        statut:           currentDecision,
-        offreEnvisagee:   gn('offreEnvisagee'),
-        echeance:         g('echeance'),
-        prochainesEtapes: g('prochainesEtapes'),
-      },
-    },
-  };
-}
-
-// ─── Export PDF ───────────────────────────────────────────────────────────────
-async function exportPDF() {
-  const btn = document.getElementById('exportBtn');
-  btn.disabled = true;
-  document.getElementById('loader').classList.add('on');
-
-  try {
-    const data = collectData();
-    const res  = await fetch('/api/rapport', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || `Erreur ${ res.status }`);
+        return true;
+      } catch (e) { return false; }
     }
 
-    const blob = await res.blob();
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    const adresse = document.getElementById('adresse').value.slice(0, 40) || 'bien';
-    const date = new Date().toISOString().slice(0,10);
-    a.href     = url;
-    a.download = `rapport_${ adresse.replace(/[^a-zA-Z0-9]/g, '-') }_${ date }.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast('PDF généré avec succès !', '✅');
-  } catch(e) {
-    console.error(e);
-    showToast('Erreur : ' + e.message, '❌');
-  } finally {
-    btn.disabled = false;
-    document.getElementById('loader').classList.remove('on');
-  }
-}
+    function resetRapport() {
+      if (!confirm('Réinitialiser toutes les données de la fiche visite ?')) return;
+      try { localStorage.removeItem('dilimo_visite_form'); } catch (e) { }
+      location.reload();
+    }
 
-// ─── Toast ────────────────────────────────────────────────────────────────────
-function showToast(msg, icon='ℹ️') {
-  const t = document.getElementById('toast');
-  t.innerHTML = `< span > ${ icon }</span > ${ msg }`;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
-}
+    // ─── Collecte des données ─────────────────────────────────────────────────────
+    function collectData() {
+      const g = id => document.getElementById(id)?.value || '';
+      const gn = id => parseFloat(g(id)) || null;
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
-buildPostes();
-// Auto-save sur chaque modification
-document.addEventListener('input', saveRapportState);
-document.addEventListener('change', saveRapportState);
-document.getElementById('dateVisite').value = new Date().toISOString().slice(0,10);
+      return {
+        bien: {
+          adresse: g('adresse'),
+          type: g('typeBien'),
+          surface: gn('surface'),
+          anneeConstruction: gn('anneeConstruction'),
+          dateVisite: g('dateVisite'),
+        },
+        dvf: {
+          total: gn('dvfTotal'),
+          dist: gn('dvfDist'),
+          months: gn('dvfMois'),
+          appartements: { stats: { median: gn('dvfAppart') } },
+          maisons: { stats: { median: gn('dvfMaison') } },
+        },
+        rentabilite: {
+          prixAchat: gn('rentPrixAchat'),
+          prixRevente: gn('rentPrixRevente'),
+          travaux: gn('rentTravaux'),
+          niveauTravaux: g('rentNiveauTravaux'),
+          margeBrute: gn('rentPrixRevente') && gn('rentPrixAchat')
+            ? gn('rentPrixRevente') - gn('rentPrixAchat') - (gn('rentTravaux') || 0)
+            - gn('rentPrixAchat') * 0.03 - gn('rentPrixRevente') * 0.04
+            : null,
+          margeBrutePct: gn('rentMargeBrute'),
+          margeNettePct: gn('rentMargeNette'),
+          margeNette: gn('rentPrixRevente') && gn('rentIS')
+            ? (gn('rentPrixRevente') - gn('rentPrixAchat') - (gn('rentTravaux') || 0)
+              - gn('rentPrixAchat') * 0.03 - gn('rentPrixRevente') * 0.04) - gn('rentIS')
+            : null,
+          fraisNotaire: gn('rentPrixAchat') ? Math.round(gn('rentPrixAchat') * 0.03) : null,
+          fraisAgence: gn('rentPrixRevente') ? Math.round(gn('rentPrixRevente') * 0.04) : null,
+          fraisFinanciers: null,
+          is: gn('rentIS'),
+          roiAnnuel: gn('rentROI'),
+          portage: gn('rentPortage'),
+          prixAchatCibles: { pac20: gn('rentPac20'), pac25: gn('rentPac25'), pac30: gn('rentPac30') },
+        },
+        notes: {
+          etat: Object.fromEntries(
+            Object.entries(etatValues).map(([k, v]) => [k, v]).concat(
+              ['etatGeneral', 'toiture', 'facade', 'menuiseries', 'plomberie', 'electricite', 'chauffage', 'dpe']
+                .map(id => [`${id}_note`, document.getElementById('note_' + id)?.value || ''])
+            )
+          ),
+          points: {
+            forts: g('pointsForts'),
+            faibles: g('pointsFaibles'),
+          },
+          noteLibre: g('noteLibre'),
+          decision: {
+            statut: currentDecision,
+            offreEnvisagee: gn('offreEnvisagee'),
+            echeance: g('echeance'),
+            prochainesEtapes: g('prochainesEtapes'),
+          },
+        },
+      };
+    }
 
-// Essai d'import automatique si des données récentes existent
-window.addEventListener('load', () => {
-  const loaded = loadRapportState();
-  // Import auto seulement si pas de données sauvegardées
-  if (!loaded) {
-    if (localStorage.getItem('immopro_dvf_last'))  importerDVF();
-    if (localStorage.getItem('immopro_calc_last')) importerCalculateur();
-  }
-});
+    // ─── Export PDF ───────────────────────────────────────────────────────────────
+    async function exportPDF() {
+      const btn = document.getElementById('exportBtn');
+      btn.disabled = true;
+      document.getElementById('loader').classList.add('on');
+
+      try {
+        const data = collectData();
+        const res = await fetch('/api/rapport', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || `Erreur ${res.status}`);
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const adresse = document.getElementById('adresse').value.slice(0, 40) || 'bien';
+        const date = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `rapport_${adresse.replace(/[^a-zA-Z0-9]/g, '-')}_${date}.pdf`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast('PDF généré avec succès !', '✅');
+      } catch (e) {
+        console.error(e);
+        showToast('Erreur : ' + e.message, '❌');
+      } finally {
+        btn.disabled = false;
+        document.getElementById('loader').classList.remove('on');
+      }
+    }
+
+    // ─── Toast ────────────────────────────────────────────────────────────────────
+    function showToast(msg, icon = 'ℹ️') {
+      const t = document.getElementById('toast');
+      t.innerHTML = `< span > ${icon}</span > ${msg}`;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    // ─── Init ─────────────────────────────────────────────────────────────────────
+    buildPostes();
+    // Auto-save sur chaque modification
+    document.addEventListener('input', saveRapportState);
+    document.addEventListener('change', saveRapportState);
+    document.getElementById('dateVisite').value = new Date().toISOString().slice(0, 10);
+
+    // Essai d'import automatique si des données récentes existent
+    window.addEventListener('load', () => {
+      const loaded = loadRapportState();
+      // Import auto seulement si pas de données sauvegardées
+      if (!loaded) {
+        if (localStorage.getItem('immopro_dvf_last')) importerDVF();
+        if (localStorage.getItem('immopro_calc_last')) importerCalculateur();
+      }
+    });
   </script>
 </body>
 

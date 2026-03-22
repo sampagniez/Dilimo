@@ -311,20 +311,20 @@ rent = data.get('rentabilite', {})
 if rent and rent.get('prixRevente'):
     story += section_title('Calcul de rentabilité', '💰')
 
-    pr  = rent.get('prixRevente', 0)
-    pa  = rent.get('prixAchat', 0)
-    fn  = rent.get('fraisNotaire', 0)
-    tr  = rent.get('travaux', 0)
-    ff  = rent.get('fraisFinanciers', 0)
-    fa  = rent.get('fraisAgence', 0)
-    mb  = rent.get('margeBrute', 0)
-    is_ = rent.get('is', 0)
-    mn  = rent.get('margeNette', 0)
-    mbp = rent.get('margeBrutePct', 0)
-    mnp = rent.get('margeNettePct', 0)
-    roi = rent.get('roiAnnuel', 0)
-    portage = rent.get('portage', 12)
-    niveau  = rent.get('niveauTravaux', '—')
+    pr  = rent.get('prixRevente') or 0
+    pa  = rent.get('prixAchat') or 0
+    fn  = rent.get('fraisNotaire') or 0
+    tr  = rent.get('travaux') or 0
+    ff  = rent.get('fraisFinanciers') or 0
+    fa  = rent.get('fraisAgence') or 0
+    mb  = rent.get('margeBrute') or 0
+    is_ = rent.get('is') or 0
+    mn  = rent.get('margeNette') or 0
+    mbp = rent.get('margeBrutePct') or 0
+    mnp = rent.get('margeNettePct') or 0
+    roi = rent.get('roiAnnuel') or 0
+    portage = rent.get('portage') or 12
+    niveau  = rent.get('niveauTravaux') or '—'
 
     # Indicateur marge
     if mnp >= 15:   ind_col, ind_txt = GREEN,  'Opération rentable'

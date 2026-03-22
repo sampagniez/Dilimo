@@ -1247,7 +1247,7 @@
         const a = document.createElement('a');
         const adresse = (document.getElementById('bienAdresse')?.value || 'offre').replace(/[^a-zA-Z0-9]/g, '-').slice(0, 30);
         a.href = url; a.download = `offre_achat_${adresse}_${new Date().toISOString().slice(0, 10)}.docx`;
-        a.click(); URL.revokeObjectURL(url);
+        a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
         showToast('Document Word généré !', '✅');
       } catch (e) { showToast('Erreur : ' + e.message, '❌'); console.error(e); }
       finally { setLoading(false); }
