@@ -5,7 +5,6 @@ FROM node:20-bullseye-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-venv \
-    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Création de l'environnement virtuel et ajout au PATH
@@ -25,9 +24,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le reste de l'application
 COPY . .
-
-# Décompresser les données DVF si le fichier zip est présent (contourne la limite de 25MB de GitHub web)
-RUN if [ -f "data/dvf.zip" ]; then unzip -o data/dvf.zip -d data/ && rm data/dvf.zip; fi
 
 # Exposer le port du serveur
 ENV PORT=3000
