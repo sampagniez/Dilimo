@@ -737,7 +737,7 @@ header {
 .delay-2 { animation-delay: .2s; opacity: 0; }
 .delay-3 { animation-delay: .3s; opacity: 0; }
 </style>
-<link rel="stylesheet" href="/dilimo-responsive.css">
+<link rel="stylesheet" href="dilimo-responsive.css">
 </head>
 <body>
 
@@ -748,11 +748,12 @@ header {
     <div class="logo-text"><strong>Dilimo</strong></div>
   </div>
     <nav class="nav-links">
-    <button class="btn-new-ope" onclick="nouvelleOperation()" title="Nouvelle opération">🔄 NOUVELLE OPÉ.</button>
-    <a href="/" class="nav-link active"><span style="font-size:14px;line-height:1">📊</span><span>SCAN</span></a>
-    <a href="/calculateur.html" class="nav-link"><span style="font-size:14px;line-height:1">🧮</span><span>ROI</span></a>
-    <a href="/rapport.html" class="nav-link"><span style="font-size:14px;line-height:1">📋</span><span>VISITE</span></a>
-    <a href="/offre.html" class="nav-link"><span style="font-size:14px;line-height:1">📝</span><span>OFFRE</span></a>
+    <button class="btn-new-ope" onclick="nouvelleOperation()" title="Réinitialiser l'opération" style="padding: 8px; margin-right: 4px; border: none; font-size: 16px; background: transparent; cursor:pointer;" onmouseover="this.style.transform='rotate(180deg)'" onmouseout="this.style.transform='none'">🔄</button>
+    <a href="base.html" class="nav-link"><span style="font-size:14px;line-height:1">🗄️</span><span>BASE</span></a>
+    <a href="index.html" class="nav-link active"><span style="font-size:14px;line-height:1">📊</span><span>SCAN</span></a>
+    <a href="calculateur.html" class="nav-link"><span style="font-size:14px;line-height:1">🧮</span><span>ROI</span></a>
+    <a href="rapport.html" class="nav-link"><span style="font-size:14px;line-height:1">📋</span><span>VISITE</span></a>
+    <a href="offre.html" class="nav-link"><span style="font-size:14px;line-height:1">📝</span><span>OFFRE</span></a>
   </nav>
 </header>
 
@@ -806,7 +807,7 @@ header {
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="/persistance.js"></script>
+<script src="persistance.js"></script>
 <!-- MAIN -->
 <div class="main" id="main-content">
 
@@ -919,6 +920,19 @@ header {
         </div>
       </div>
 
+    </div>
+
+    <!-- Row: Analyse des Biens (Vendus / A Vendre) -->
+    <div class="panel fade-up delay-2" style="margin-top:16px;">
+      <div class="panel-header">
+         <div class="panel-title"><span class="icon">📊</span> Analyse Comparée du Secteur</div>
+         <div class="panel-sub">Médiane des prix : DVF vs Annonces (T1, T2, T3, T4, Maison, Terrain)</div>
+      </div>
+      <div class="panel-body">
+         <div class="chart-wrap" style="height: 350px;">
+           <canvas id="analyseTypeChart"></canvas>
+         </div>
+      </div>
     </div>
 
     <!-- Row: Map + Urbanisme -->
@@ -1178,8 +1192,37 @@ async function analyze(lat, lon, label = '', insee = '') {
     document.getElementById('mapSub').textContent = `${data.transactions?.length || 0} transactions affichées`;
     document.getElementById('txSub').textContent = `${data.transactions?.length || 0} transactions récentes`;
 
-    // Sauvegarder pour le compte rendu
-    try { localStorage.setItem('immopro_dvf_last', JSON.stringify({...data, adresse: label})); } catch(e){}
+    // Sauvegarder pour le compte rendu et alimenter la BASE
+    try { 
+      localStorage.setItem('immopro_dvf_last', JSON.stringify({...data, adresse: label, lat, lon, insee})); 
+      
+      let baseData = [];
+      const rawBase = localStorage.getItem('immopro_base_data');
+      if (rawBase) { baseData = JSON.parse(rawBase); }
+      
+      if (data.transactions && data.transactions.length) {
+        const newTx = data.transactions.map(t => ({
+          id: Date.now() + Math.random(),
+          statut: 'Biens vendus',
+          localisation: t.adresse || label || 'Inconnue',
+          titre: 'Transaction DVF',
+          type: (t.type === 'Appartement' && t.pieces) ? 'T' + t.pieces : (t.type || 'Appartement'),
+          surface: t.surface || 0,
+          dpe: 'N/C',
+          prix: (t.prix && t.surface) ? Math.round(t.prix * t.surface) : 0,
+          prix_m2: t.prix || 0
+        }));
+        
+        const currentKeys = new Set(baseData.map(b => `${b.localisation}-${Math.round(b.surface)}-${Math.round(b.prix_m2)}`));
+        const filteredNewTx = newTx.filter(t => !currentKeys.has(`${t.localisation}-${Math.round(t.surface)}-${Math.round(t.prix_m2)}`));
+        
+        baseData = [...filteredNewTx, ...baseData];
+        if (baseData.length > 500) baseData = baseData.slice(0, 500); 
+        localStorage.setItem('immopro_base_data', JSON.stringify(baseData));
+      }
+    } catch(e) { console.error('Erreur MAJ Base', e); }
+    
+    renderAnalyseChart();
     showToast(`Analyse terminée — ${data.total} transactions trouvées`, '✅');
 
   } catch(e) {
@@ -1439,6 +1482,107 @@ window.selectAddress = (lat, lon, label, insee) => {
   acBox.style.display = 'none';
   window._analyzeEnhanced(lat, lon, label, insee);
 };
+
+function renderAnalyseChart() {
+  const rawBase = localStorage.getItem('immopro_base_data');
+  if (!rawBase) return;
+  const data = JSON.parse(rawBase);
+  const types = ['T1', 'T2', 'T3', 'T4', 'Maison', 'Terrain'];
+  
+  const statsVendus = {};
+  const statsAvendre = {};
+  types.forEach(t => { statsVendus[t] = { sum: 0, count: 0 }; statsAvendre[t] = { sum: 0, count: 0 }; });
+
+  data.forEach(d => {
+    if (d.prix_m2 > 0) {
+      let t = d.type;
+      // Convertir "Appartement" non typé issu de vieilles sauvegardes selon la surface
+      if (t === 'Appartement' && d.surface) {
+         if (d.surface <= 35) t = 'T1';
+         else if (d.surface <= 50) t = 'T2';
+         else if (d.surface <= 70) t = 'T3';
+         else t = 'T4';
+      }
+      
+      const typeKey = (t === 'Studio' || t === '1P') ? 'T1' : (t === '2P' ? 'T2' : (t === '3P' ? 'T3' : (t === '4P' ? 'T4' : t)));
+      if (types.includes(typeKey)) {
+        if (d.statut === 'Biens vendus') {
+          statsVendus[typeKey].sum += d.prix_m2;
+          statsVendus[typeKey].count++;
+        } else {
+          statsAvendre[typeKey].sum += d.prix_m2;
+          statsAvendre[typeKey].count++;
+        }
+      }
+    }
+  });
+
+  const avgVendus = types.map(t => statsVendus[t].count > 0 ? Math.round(statsVendus[t].sum / statsVendus[t].count) : 0);
+  const avgAvendre = types.map(t => statsAvendre[t].count > 0 ? Math.round(statsAvendre[t].sum / statsAvendre[t].count) : 0);
+
+  const ctx = document.getElementById('analyseTypeChart');
+  if (!ctx) return;
+  if (window.analyseChartInstance) window.analyseChartInstance.destroy();
+  
+  window.analyseChartInstance = new Chart(ctx.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: types,
+      datasets: [
+        { label: 'Biens vendus (DVF)', data: avgVendus, backgroundColor: '#3B82F6', borderRadius: 4 },
+        { label: 'Biens à vendre (Annonces)', data: avgAvendre, backgroundColor: '#10B981', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#F4F6F8' }, ticks: { color: '#8896A8', callback: v => v + ' €/m²' } },
+        x: { grid: { display: false }, ticks: { color: '#8896A8' } }
+      },
+      plugins: {
+        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw} €/m²` } }
+      }
+    }
+  });
+}
+
+function restoreScanner() {
+  const rawDvf = localStorage.getItem('immopro_dvf_last');
+  window.currentLat = 0; window.currentLon = 0; window.currentInsee = '';
+  
+  if (rawDvf) {
+    try {
+      const data = JSON.parse(rawDvf);
+      document.getElementById('placeholder').style.display = 'none';
+      const resultsEl = document.getElementById('results');
+      resultsEl.style.display = 'block';
+
+      document.getElementById('resultTitle').textContent = data.adresse || '';
+      document.getElementById('resultSub').textContent = `${data.total || 0} transactions trouvées`;
+
+      renderKPI('Appart', data.appartements?.stats);
+      renderKPI('Maison', data.maisons?.stats);
+      renderKPI('Terrain', data.terrains?.stats);
+
+      renderEvolutionChart(data.evolution || []);
+      renderTypologies(data.appartements?.typologies || {});
+
+      renderMap(data.lat || 48.8, data.lon || 2.3, data.transactions || [], data.appartements?.stats?.median);
+      renderScore(data);
+      renderUrbanisme(data, data.lat || 48.8, data.lon || 2.3, data.insee || '');
+      renderTransactions(data.transactions || []);
+
+      document.getElementById('mapSub').textContent = `${data.transactions?.length || 0} transactions affichées`;
+      document.getElementById('txSub').textContent = `${data.transactions?.length || 0} transactions récentes`;
+      
+      window.currentLat = data.lat; window.currentLon = data.lon; window.currentInsee = data.insee;
+    } catch(e) { console.error("Restore failed", e); }
+  }
+  renderAnalyseChart();
+}
+
+document.addEventListener('DOMContentLoaded', restoreScanner);
 </script>
 </body>
 </html>

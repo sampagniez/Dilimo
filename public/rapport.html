@@ -667,24 +667,25 @@
       animation: fadeUp .35s ease forwards
     }
   </style>
-  <link rel="stylesheet" href="/dilimo-responsive.css">
+  <link rel="stylesheet" href="dilimo-responsive.css">
 </head>
 
 <body>
 
   <header>
-    <a href="/" class="logo">
+    <a href="index.html" class="logo">
       <div class="logo-mark">D</div>
       <div class="logo-text"><strong>Dilimo</strong></div>
     </a>
     <nav class="nav-links">
-      <button class="btn-new-ope" onclick="nouvelleOperation()" title="Nouvelle opération">🔄 NOUVELLE OPÉ.</button>
-      <a href="/" class="nav-link"><span style="font-size:14px;line-height:1">📊</span><span>SCAN</span></a>
-      <a href="/calculateur.html" class="nav-link"><span
+      <button class="btn-new-ope" onclick="nouvelleOperation()" title="Réinitialiser l'opération" style="padding: 8px; margin-right: 4px; border: none; font-size: 16px; background: transparent; cursor:pointer;" onmouseover="this.style.transform='rotate(180deg)'" onmouseout="this.style.transform='none'">🔄</button>
+      <a href="base.html" class="nav-link"><span style="font-size:14px;line-height:1">🗄️</span><span>BASE</span></a>
+      <a href="index.html" class="nav-link"><span style="font-size:14px;line-height:1">📊</span><span>SCAN</span></a>
+      <a href="calculateur.html" class="nav-link"><span
           style="font-size:14px;line-height:1">🧮</span><span>ROI</span></a>
-      <a href="/rapport.html" class="nav-link active"><span
+      <a href="rapport.html" class="nav-link active"><span
           style="font-size:14px;line-height:1">📋</span><span>VISITE</span></a>
-      <a href="/offre.html" class="nav-link"><span style="font-size:14px;line-height:1">📝</span><span>OFFRE</span></a>
+      <a href="offre.html" class="nav-link"><span style="font-size:14px;line-height:1">📝</span><span>OFFRE</span></a>
     </nav>
   </header>
 
@@ -704,7 +705,7 @@
     </div>
   </div>
 
-  <script src="/persistance.js"></script>
+  <script src="persistance.js"></script>
   <div class="loader" id="loader">
     <div class="spinner"></div>
     <div class="loader-text">Génération du PDF…</div>
