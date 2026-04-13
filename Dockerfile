@@ -5,6 +5,7 @@ FROM node:20-bullseye-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-venv \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Création de l'environnement virtuel et ajout au PATH
@@ -28,6 +29,9 @@ COPY . .
 # Exposer le port du serveur
 ENV PORT=3000
 EXPOSE $PORT
+
+# Extraire les données DVF
+RUN if [ -f data/dvf.zip ]; then cd data && unzip dvf.zip && rm dvf.zip; fi
 
 # Démarrer le serveur
 CMD ["npm", "start"]

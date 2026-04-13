@@ -15,7 +15,7 @@ $depts = @(
     @{ code = "90"; nom = "Territoire de Belfort" }
 )
 
-$annees = @("2020", "2021", "2022", "2023", "2024")
+$annees = @("2020", "2021", "2022", "2023", "2024", "2025")
 
 $dossierData = "$PSScriptRoot\data\brut"
 New-Item -ItemType Directory -Force -Path $dossierData | Out-Null
@@ -36,8 +36,9 @@ foreach ($dept in $depts) {
     Write-Host "━━━ $($dept.nom) (Dept. $($dept.code)) ━━━" -ForegroundColor Magenta
 
     foreach ($annee in $annees) {
-        $url      = "https://files.data.gouv.fr/geo-dvf/latest/csv/$annee/departements/$($dept.code).csv"
+        $url      = "https://files.data.gouv.fr/geo-dvf/latest/csv/$annee/departements/$($dept.code).csv.gz"
         $fichier  = "$dossierData\dvf_$($dept.code)_$annee.csv"
+        $fichierGz = "$fichier.gz"
 
         if (Test-Path $fichier) {
             $taille = [math]::Round((Get-Item $fichier).Length / 1MB, 1)
@@ -46,18 +47,30 @@ foreach ($dept in $depts) {
             continue
         }
 
-        Write-Host "  ⬇  $annee — téléchargement..." -ForegroundColor Gray -NoNewline
+        Write-Host "  ⬇  $annee — téléchargement... " -ForegroundColor Gray -NoNewline
 
         try {
             $ProgressPreference = 'SilentlyContinue'
-            Invoke-WebRequest -Uri $url -OutFile $fichier -UseBasicParsing -TimeoutSec 120
+            Invoke-WebRequest -Uri $url -OutFile $fichierGz -UseBasicParsing -TimeoutSec 120
+            
+            # Extraction du Gzip
+            $fsOut = [System.IO.File]::Create($fichier)
+            $fsIn = [System.IO.File]::OpenRead($fichierGz)
+            $gzOut = New-Object System.IO.Compression.GZipStream $fsIn, ([System.IO.Compression.CompressionMode]::Decompress)
+            $gzOut.CopyTo($fsOut)
+            $gzOut.Close()
+            $fsIn.Close()
+            $fsOut.Close()
+            Remove-Item $fichierGz
+
             $taille = [math]::Round((Get-Item $fichier).Length / 1MB, 1)
-            Write-Host " ✓ $taille Mo" -ForegroundColor Green
+            Write-Host "✓ $taille Mo" -ForegroundColor Green
             $total++
         }
         catch {
-            Write-Host " ✗ Échec (fichier peut-être indisponible pour cette année)" -ForegroundColor Red
+            Write-Host "✗ Échec (fichier peut-être indisponible pour cette année)" -ForegroundColor Red
             $erreurs++
+            if (Test-Path $fichierGz) { Remove-Item $fichierGz }
             if (Test-Path $fichier) { Remove-Item $fichier }
         }
     }
