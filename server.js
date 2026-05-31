@@ -45,14 +45,57 @@ function parseRow(row) {
     date:           row.date_mutation                           || '',
     pieces:         parseInt(row.nombre_pieces_principales)     || null,
     parcelle:       row.id_parcelle                             || null,
-    section:        row.section_prefixe                         || null,
     commune:        row.nom_commune                             || null,
     codeCommune:    row.code_commune                            || null,
     codeDept:       row.code_departement                        || null,
     adresse:        [row.adresse_numero, row.adresse_nom_voie].filter(Boolean).join(' '),
     codePostal:     row.code_postal                             || null,
     natureCulture:  row.nature_culture                          || null,
+    idMutation:     row.id_mutation                             || null,  // pour déduplication multi-lots
   };
+}
+
+// ─── Déduplication multi-lots DVF ─────────────────────────────────────────────
+// DVF stocke une ligne par local (lot) dans une même mutation.
+// La valeur_fonciere est TOTALE pour toute la mutation : il faut répartir
+// la valeur proportionnellement à la surface de chaque lot bâti.
+// Sans déduplication, un immeuble de 2 apparts vendu 300k afficherait
+// 300k/surface_lot1 ET 300k/surface_lot2 → prix/m² artificiellement élevés.
+function dedupMultiLots(records) {
+  // Grouper par id_mutation
+  const byMutation = new Map();
+  for (const r of records) {
+    const key = r.idMutation || `${r.date}_${r.adresse}_${r.valeur}`;
+    if (!byMutation.has(key)) byMutation.set(key, []);
+    byMutation.get(key).push(r);
+  }
+
+  const result = [];
+  for (const [, lots] of byMutation) {
+    if (lots.length === 1) {
+      result.push(lots[0]);
+      continue;
+    }
+    // Mutation multi-lots : calculer la surface bâtie totale de la mutation
+    const totalSurfaceBati = lots
+      .filter(l => l.surface && l.surface > 0)
+      .reduce((s, l) => s + l.surface, 0);
+
+    if (totalSurfaceBati <= 0) {
+      result.push(...lots);
+      continue;
+    }
+
+    // Distribuer la valeur proportionnellement à chaque lot
+    const valeur = lots[0].valeur;
+    for (const lot of lots) {
+      if (!lot.surface || lot.surface <= 0) continue;
+      // La quote-part de valeur de ce lot = valeur × (surface_lot / surface_totale)
+      const valeurLot = valeur * (lot.surface / totalSurfaceBati);
+      result.push({ ...lot, valeur: valeurLot });
+    }
+  }
+  return result;
 }
 
 function haversine(lat1, lon1, lat2, lon2) {
@@ -194,10 +237,27 @@ app.get('/api/dvf', async (req, res) => {
   const cutoffStr = cutoff.toISOString().slice(0, 10);
   const t0 = Date.now();
 
-  const nearby   = searchRadius(deptData.grid, lat, lon, dist).filter(r => r.date >= cutoffStr);
-  const apparts  = nearby.filter(r => r.type === 'Appartement' && r.surface  > 5);
-  const maisons  = nearby.filter(r => r.type === 'Maison'      && r.surface  > 5);
-  const terrains = nearby.filter(r => (!r.type || r.type === '') && r.surfaceTerrain > 0);
+  // Seuils de cohérence pour les prix au m²
+  const PM2_MIN_BATI    = 500;   // en-dessous = vente partielle / donation
+  const PM2_MAX_APPART  = 15000; // au-dessus = multi-lots non dédupliqués ou erreur
+  const PM2_MAX_MAISON  = 20000;
+  const SURF_MIN_BATI   = 9;     // en-dessous = cave / parking / local non résidentiel
+
+  const nearby = searchRadius(deptData.grid, lat, lon, dist).filter(r => r.date >= cutoffStr);
+
+  // Déduplication multi-lots sur l'ensemble des transactions proches
+  const nearbyDedup = dedupMultiLots(nearby);
+
+  // Filtre cohérence + surface minimale
+  function isValidBati(r, pm2Max) {
+    if (!r.surface || r.surface < SURF_MIN_BATI) return false;
+    const pm2 = r.valeur / r.surface;
+    return pm2 >= PM2_MIN_BATI && pm2 <= pm2Max;
+  }
+
+  const apparts  = nearbyDedup.filter(r => r.type === 'Appartement' && isValidBati(r, PM2_MAX_APPART));
+  const maisons  = nearbyDedup.filter(r => r.type === 'Maison'      && isValidBati(r, PM2_MAX_MAISON));
+  const terrains = nearbyDedup.filter(r => (!r.type || r.type === '') && r.surfaceTerrain > 0);
 
   const typologies = {};
   for (const r of apparts) {
@@ -209,30 +269,31 @@ app.get('/api/dvf', async (req, res) => {
   for (const [k, v] of Object.entries(typologies)) typoStats[k] = stats(v);
 
   const evolutionMap = {};
-  for (const r of nearby) {
-    if ((r.type === 'Appartement' || r.type === 'Maison') && r.surface > 5) {
-      const key = r.date.slice(0, 7);
-      if (!evolutionMap[key]) evolutionMap[key] = [];
-      evolutionMap[key].push(r.valeur / r.surface);
-    }
+  for (const r of [...apparts, ...maisons]) {
+    const key = r.date.slice(0, 7);
+    if (!evolutionMap[key]) evolutionMap[key] = [];
+    evolutionMap[key].push(r.valeur / r.surface);
   }
   const evolution = Object.entries(evolutionMap)
     .sort(([a], [b]) => a.localeCompare(b))
     .slice(-18)
     .map(([mois, prix]) => ({ mois, median: Math.round(percentile(prix, 50)), count: prix.length }));
 
-  const transactions = nearby
-    .filter(r => (r.type === 'Appartement' || r.type === 'Maison') && r.surface > 5)
+  const transactions = [...apparts, ...maisons]
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 100)
     .map(r => ({ lat: r.lat, lon: r.lon, type: r.type,
-      prix: Math.round(r.valeur / r.surface), valeur: r.valeur,
+      prix: Math.round(r.valeur / r.surface), valeur: Math.round(r.valeur),
       surface: r.surface, pieces: r.pieces, date: r.date,
       adresse: r.adresse, commune: r.commune }));
 
-  console.log(`[DVF] ${lat},${lon} dép=${deptCode} dist=${dist}km months=${months} → ${nearby.length} en ${Date.now()-t0}ms`);
+  const filtered = nearby.length - nearbyDedup.filter(r =>
+    (r.type === 'Appartement' || r.type === 'Maison') && r.surface >= SURF_MIN_BATI
+  ).length;
+  console.log(`[DVF] ${lat},${lon} dép=${deptCode} dist=${dist}km months=${months} → ${nearby.length} brut / ${apparts.length + maisons.length} qualifiés en ${Date.now()-t0}ms`);
   res.json({
-    zone: { lat, lon, dist, months }, dept: deptCode, total: nearby.length, tempsMs: Date.now()-t0,
+    zone: { lat, lon, dist, months }, dept: deptCode, total: nearby.length,
+    totalQualifie: apparts.length + maisons.length, tempsMs: Date.now()-t0,
     appartements: { stats: stats(apparts.map(r => r.valeur/r.surface)), typologies: typoStats },
     maisons:      { stats: stats(maisons.map(r => r.valeur/r.surface)) },
     terrains:     { stats: stats(terrains.map(r => r.valeur/r.surfaceTerrain)) },
