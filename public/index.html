@@ -801,7 +801,8 @@ header {
 <!-- LOADING -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
-  <div class="loading-text">Analyse en cours…</div>
+  <div class="loading-text" id="loadingText">Analyse en cours…</div>
+  <div style="color:rgba(255,255,255,.4);font-size:12px;margin-top:6px" id="loadingSubText"></div>
 </div>
 
 <!-- TOAST -->
@@ -849,7 +850,7 @@ header {
         <div class="kpi-count" id="countAppart">—</div>
         <div class="kpi-badge appart">🏢 Appartements</div>
         <div class="kpi-price" id="priceAppart">—<span class="kpi-unit"> €/m²</span></div>
-        <div class="kpi-label">Prix médian</div>
+        <div class="kpi-label">Prix médian <span style="font-size:10px;color:var(--mist)">(DVF vendus)</span></div>
         <div class="kpi-range">
           <span>P10 <span id="p10Appart">—</span></span>
           <span>Moy <span id="meanAppart">—</span></span>
@@ -861,7 +862,7 @@ header {
         <div class="kpi-count" id="countMaison">—</div>
         <div class="kpi-badge maison">🏡 Maisons</div>
         <div class="kpi-price" id="priceMaison">—<span class="kpi-unit"> €/m²</span></div>
-        <div class="kpi-label">Prix médian</div>
+        <div class="kpi-label">Prix médian <span style="font-size:10px;color:var(--mist)">(DVF vendus)</span></div>
         <div class="kpi-range">
           <span>P10 <span id="p10Maison">—</span></span>
           <span>Moy <span id="meanMaison">—</span></span>
@@ -873,11 +874,27 @@ header {
         <div class="kpi-count" id="countTerrain">—</div>
         <div class="kpi-badge terrain">🌱 Terrains</div>
         <div class="kpi-price" id="priceTerrain">—<span class="kpi-unit"> €/m²</span></div>
-        <div class="kpi-label">Prix médian</div>
+        <div class="kpi-label">Prix médian <span style="font-size:10px;color:var(--mist)">(DVF vendus)</span></div>
         <div class="kpi-range">
           <span>P10 <span id="p10Terrain">—</span></span>
           <span>Moy <span id="meanTerrain">—</span></span>
           <span>P90 <span id="p90Terrain">—</span></span>
+        </div>
+      </div>
+
+      <!-- KPI Annonces PAP -->
+      <div class="kpi-card" id="cardAnnonces" style="border-top:3px solid #10B981;background:linear-gradient(135deg,#F0FDF4,#fff)">
+        <div class="kpi-count" id="countAnnonces" style="color:#10B981">—</div>
+        <div class="kpi-badge" style="background:#D1FAE5;color:#065F46">🏷️ À vendre (PAP)</div>
+        <div class="kpi-price" id="priceAnnonces" style="color:#065F46">
+          <span id="annoncesSpinner" style="display:none;font-size:14px;color:#6B7280">⏳ Chargement…</span>
+          <span id="annoncesValue">—</span><span class="kpi-unit" id="annoncesUnit"> €/m²</span>
+        </div>
+        <div class="kpi-label">Prix médian <span style="font-size:10px;color:var(--mist)">(annonces en ligne)</span></div>
+        <div class="kpi-range" id="annoncesRange">
+          <span>T1 <span id="papT1">—</span></span>
+          <span>T2 <span id="papT2">—</span></span>
+          <span>T3 <span id="papT3">—</span></span>
         </div>
       </div>
 
@@ -922,13 +939,16 @@ header {
 
     </div>
 
-    <!-- Row: Analyse des Biens (Vendus / A Vendre) -->
+    <!-- Row: Analyse Comparée DVF vs PAP -->
     <div class="panel fade-up delay-2" style="margin-top:16px;">
       <div class="panel-header">
-         <div class="panel-title"><span class="icon">📊</span> Analyse Comparée du Secteur</div>
-         <div class="panel-sub">Médiane des prix : DVF vs Annonces (T1, T2, T3, T4, Maison, Terrain)</div>
+         <div class="panel-title"><span class="icon">📊</span> Marché : Vendus (DVF) vs À Vendre (PAP)</div>
+         <div class="panel-sub" id="analyseChartSub">Prix médian €/m² par type — DVF data.gouv.fr · Annonces pap.fr</div>
       </div>
       <div class="panel-body">
+         <div id="analyseNoData" style="display:none;text-align:center;padding:40px;color:var(--mist);font-size:13px">
+           ⏳ Analyse en cours… les annonces PAP seront disponibles dans quelques secondes.
+         </div>
          <div class="chart-wrap" style="height: 350px;">
            <canvas id="analyseTypeChart"></canvas>
          </div>
@@ -1140,15 +1160,32 @@ async function quickSearch(addr) {
   document.getElementById('searchBtn').click();
 }
 
+// ─── État annonces PAP ────────────────────────────────────────────────────────
+let dvfDataCache  = null;  // dernière réponse DVF
+let annoncesData  = null;  // dernière réponse PAP scraping
+
 // ─── Main analysis ────────────────────────────────────────────────────────────
 async function analyze(lat, lon, label = '', insee = '') {
   setLoading(true);
   currentLat = lat; currentLon = lon; currentInsee = insee;
 
+  // Réinitialiser l'état annonces
+  annoncesData = null;
+  resetAnnoncesKPI();
+
+  const subEl = document.getElementById('loadingSubText');
+  if (subEl) subEl.textContent = '';
+  const hintTimer = setTimeout(() => {
+    if (subEl) subEl.textContent = '📡 Chargement des données DVF depuis data.gouv.fr…';
+  }, 2500);
+
   try {
     const url = `/api/dvf?lat=${lat}&lon=${lon}&dist=${filters.dist}&months=${filters.months}`;
     const res = await fetch(url);
+    clearTimeout(hintTimer);
+    if (subEl) subEl.textContent = '';
     const data = await res.json();
+    dvfDataCache = data;
 
     document.getElementById('placeholder').style.display = 'none';
     const resultsEl = document.getElementById('results');
@@ -1156,50 +1193,35 @@ async function analyze(lat, lon, label = '', insee = '') {
 
     // Header
     document.getElementById('resultTitle').textContent = label || `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+    const periodeLabel = filters.months === 12 ? '1 an' : filters.months === 24 ? '2 ans' : '5 ans';
     document.getElementById('resultSub').textContent =
-      `${data.total} transactions trouvées · rayon ${filters.dist} km · ${filters.months === 12 ? '1 an' : filters.months === 24 ? '2 ans' : '5 ans'}`;
+      `${data.total} transactions · rayon ${filters.dist} km · ${periodeLabel} · dép. ${data.dept || '—'} · source data.gouv.fr`;
 
     // Urbanisme links
     document.getElementById('btnGeoportail').href = `https://www.geoportail-urbanisme.gouv.fr/map/#zoom=17&lat=${lat}&lon=${lon}`;
     document.getElementById('btnDvfExplore').href = `https://explore.data.gouv.fr/immobilier?lng=${lon}&lat=${lat}&zoom=15`;
 
-    // KPI - Appartements
+    // KPI DVF
     renderKPI('Appart', data.appartements?.stats);
-    // KPI - Maisons
     renderKPI('Maison', data.maisons?.stats);
-    // KPI - Terrains
     renderKPI('Terrain', data.terrains?.stats);
 
-    // Evolution chart
     renderEvolutionChart(data.evolution || []);
-
-    // Typologies
     renderTypologies(data.appartements?.typologies || {});
-
-    // Map
     renderMap(lat, lon, data.transactions || [], data.appartements?.stats?.median);
-
-    // Urbanisme
     renderUrbanisme(data, lat, lon, insee);
-
-    // Score
     renderScore(data);
-
-    // Transactions list
     renderTransactions(data.transactions || []);
 
-    // Sub text
     document.getElementById('mapSub').textContent = `${data.transactions?.length || 0} transactions affichées`;
     document.getElementById('txSub').textContent = `${data.transactions?.length || 0} transactions récentes`;
 
     // Sauvegarder pour le compte rendu et alimenter la BASE
-    try { 
-      localStorage.setItem('immopro_dvf_last', JSON.stringify({...data, adresse: label, lat, lon, insee})); 
-      
+    try {
+      localStorage.setItem('immopro_dvf_last', JSON.stringify({...data, adresse: label, lat, lon, insee}));
       let baseData = [];
       const rawBase = localStorage.getItem('immopro_base_data');
       if (rawBase) { baseData = JSON.parse(rawBase); }
-      
       if (data.transactions && data.transactions.length) {
         const newTx = data.transactions.map(t => ({
           id: Date.now() + Math.random(),
@@ -1207,30 +1229,100 @@ async function analyze(lat, lon, label = '', insee = '') {
           localisation: t.adresse || label || 'Inconnue',
           titre: 'Transaction DVF',
           type: (t.type === 'Appartement' && t.pieces) ? 'T' + t.pieces : (t.type || 'Appartement'),
-          surface: t.surface || 0,
-          dpe: 'N/C',
+          surface: t.surface || 0, dpe: 'N/C',
           prix: (t.prix && t.surface) ? Math.round(t.prix * t.surface) : 0,
           prix_m2: t.prix || 0
         }));
-        
         const currentKeys = new Set(baseData.map(b => `${b.localisation}-${Math.round(b.surface)}-${Math.round(b.prix_m2)}`));
-        const filteredNewTx = newTx.filter(t => !currentKeys.has(`${t.localisation}-${Math.round(t.surface)}-${Math.round(t.prix_m2)}`));
-        
-        baseData = [...filteredNewTx, ...baseData];
-        if (baseData.length > 500) baseData = baseData.slice(0, 500); 
+        baseData = [...newTx.filter(t => !currentKeys.has(`${t.localisation}-${Math.round(t.surface)}-${Math.round(t.prix_m2)}`)), ...baseData];
+        if (baseData.length > 500) baseData = baseData.slice(0, 500);
         localStorage.setItem('immopro_base_data', JSON.stringify(baseData));
       }
     } catch(e) { console.error('Erreur MAJ Base', e); }
-    
-    renderAnalyseChart();
-    showToast(`Analyse terminée — ${data.total} transactions trouvées`, '✅');
+
+    // Graphique comparé — DVF seulement pour l'instant
+    renderAnalyseChart(data, null);
+
+    showToast(`Analyse DVF terminée — ${data.total} transactions`, '✅');
+
+    // ── Lancer le scraping PAP en parallèle (non bloquant) ──────────────────
+    startAnnoncesScrap(lat, lon);
 
   } catch(e) {
+    clearTimeout(hintTimer);
+    if (subEl) subEl.textContent = '';
     console.error(e);
     showToast('Erreur lors de l\'analyse. Le serveur est-il démarré ?', '❌');
   } finally {
     setLoading(false);
   }
+}
+
+// ─── Scraping annonces PAP (déclenché en arrière-plan) ────────────────────────
+async function startAnnoncesScrap(lat, lon) {
+  // Afficher le spinner sur la KPI carte
+  const spinner = document.getElementById('annoncesSpinner');
+  const valueEl = document.getElementById('annoncesValue');
+  const unitEl  = document.getElementById('annoncesUnit');
+  if (spinner) { spinner.style.display = 'inline'; valueEl.style.display = 'none'; if(unitEl) unitEl.style.display = 'none'; }
+
+  const subEl = document.getElementById('analyseChartSub');
+  if (subEl) subEl.textContent = '⏳ Scraping PAP.fr en cours…';
+
+  try {
+    const res  = await fetch(`/api/annonces?lat=${lat}&lon=${lon}`);
+    const data = await res.json();
+
+    if (data.error) throw new Error(data.error);
+
+    annoncesData = data;
+    renderAnnoncesKPI(data);
+    renderAnalyseChart(dvfDataCache, data);
+
+    const cnt = data.count || 0;
+    if (subEl) subEl.textContent = `DVF data.gouv.fr · PAP.fr (${cnt} annonces scrapées · ${data.cached ? 'cache' : 'live'})`;
+    showToast(`Annonces PAP chargées — ${cnt} annonces`, '🏷️');
+
+  } catch(e) {
+    console.warn('[Annonces]', e.message);
+    if (spinner) { spinner.style.display = 'none'; valueEl.style.display = 'inline'; if(unitEl) unitEl.style.display = 'inline'; }
+    if (subEl) subEl.textContent = 'DVF data.gouv.fr · Annonces PAP non disponibles';
+    document.getElementById('annoncesValue').textContent = 'N/D';
+    document.getElementById('countAnnonces').textContent = '— annonces';
+  }
+}
+
+function resetAnnoncesKPI() {
+  const spinner = document.getElementById('annoncesSpinner');
+  const valueEl = document.getElementById('annoncesValue');
+  const unitEl  = document.getElementById('annoncesUnit');
+  if (spinner) spinner.style.display = 'none';
+  if (valueEl) { valueEl.style.display = 'inline'; valueEl.textContent = '—'; }
+  if (unitEl)  { unitEl.style.display  = 'inline'; }
+  const countEl = document.getElementById('countAnnonces');
+  if (countEl) countEl.textContent = '—';
+  ['papT1','papT2','papT3'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '—'; });
+}
+
+function renderAnnoncesKPI(data) {
+  const spinner = document.getElementById('annoncesSpinner');
+  const valueEl = document.getElementById('annoncesValue');
+  const unitEl  = document.getElementById('annoncesUnit');
+  if (spinner) spinner.style.display = 'none';
+  if (valueEl) { valueEl.style.display = 'inline'; }
+  if (unitEl)  { unitEl.style.display  = 'inline'; }
+
+  const global = data.global;
+  if (global?.median) {
+    document.getElementById('annoncesValue').textContent = global.median.toLocaleString('fr-FR');
+    document.getElementById('countAnnonces').textContent = `${data.count} annonces`;
+  }
+
+  const stats = data.stats || {};
+  const fmt = v => v ? Math.round(v).toLocaleString('fr-FR') : '—';
+  document.getElementById('papT1').textContent = fmt(stats.T1?.median);
+  document.getElementById('papT2').textContent = fmt(stats.T2?.median);
+  document.getElementById('papT3').textContent = fmt(stats.T3?.median);
 }
 
 function renderKPI(type, s) {
@@ -1483,67 +1575,69 @@ window.selectAddress = (lat, lon, label, insee) => {
   window._analyzeEnhanced(lat, lon, label, insee);
 };
 
-function renderAnalyseChart() {
-  const rawBase = localStorage.getItem('immopro_base_data');
-  if (!rawBase) return;
-  const data = JSON.parse(rawBase);
-  const types = ['T1', 'T2', 'T3', 'T4', 'Maison', 'Terrain'];
-  
-  const statsVendus = {};
-  const statsAvendre = {};
-  types.forEach(t => { statsVendus[t] = { sum: 0, count: 0 }; statsAvendre[t] = { sum: 0, count: 0 }; });
-
-  data.forEach(d => {
-    if (d.prix_m2 > 0) {
-      let t = d.type;
-      // Convertir "Appartement" non typé issu de vieilles sauvegardes selon la surface
-      if (t === 'Appartement' && d.surface) {
-         if (d.surface <= 35) t = 'T1';
-         else if (d.surface <= 50) t = 'T2';
-         else if (d.surface <= 70) t = 'T3';
-         else t = 'T4';
-      }
-      
-      const typeKey = (t === 'Studio' || t === '1P') ? 'T1' : (t === '2P' ? 'T2' : (t === '3P' ? 'T3' : (t === '4P' ? 'T4' : t)));
-      if (types.includes(typeKey)) {
-        if (d.statut === 'Biens vendus') {
-          statsVendus[typeKey].sum += d.prix_m2;
-          statsVendus[typeKey].count++;
-        } else {
-          statsAvendre[typeKey].sum += d.prix_m2;
-          statsAvendre[typeKey].count++;
-        }
-      }
-    }
-  });
-
-  const avgVendus = types.map(t => statsVendus[t].count > 0 ? Math.round(statsVendus[t].sum / statsVendus[t].count) : 0);
-  const avgAvendre = types.map(t => statsAvendre[t].count > 0 ? Math.round(statsAvendre[t].sum / statsAvendre[t].count) : 0);
-
+// dvfData = réponse /api/dvf, papData = réponse /api/annonces (ou null)
+function renderAnalyseChart(dvfData, papData) {
   const ctx = document.getElementById('analyseTypeChart');
   if (!ctx) return;
+
+  const types = ['T1', 'T2', 'T3', 'T4', 'T5+', 'Maison'];
+
+  // ── DVF : extraire les médianes par typologie ─────────────────────────────
+  const dvfTypo = dvfData?.appartements?.typologies || {};
+  const dvfMaison = dvfData?.maisons?.stats;
+
+  const vendus = types.map(t => {
+    if (t === 'Maison') return dvfMaison?.median || 0;
+    return dvfTypo[t]?.median || 0;
+  });
+
+  // ── PAP : extraire les médianes par typologie ─────────────────────────────
+  const papStats = papData?.stats || {};
+  const avendre = types.map(t => papStats[t]?.median || 0);
+
+  const hasAnnonces = avendre.some(v => v > 0);
+
   if (window.analyseChartInstance) window.analyseChartInstance.destroy();
-  
+
+  const datasets = [
+    {
+      label: 'Vendus (DVF)',
+      data: vendus,
+      backgroundColor: '#3B82F6',
+      borderRadius: 5,
+    },
+  ];
+  if (hasAnnonces) {
+    datasets.push({
+      label: 'À vendre (PAP)',
+      data: avendre,
+      backgroundColor: '#10B981',
+      borderRadius: 5,
+    });
+  }
+
   window.analyseChartInstance = new Chart(ctx.getContext('2d'), {
     type: 'bar',
-    data: {
-      labels: types,
-      datasets: [
-        { label: 'Biens vendus (DVF)', data: avgVendus, backgroundColor: '#3B82F6', borderRadius: 4 },
-        { label: 'Biens à vendre (Annonces)', data: avgAvendre, backgroundColor: '#10B981', borderRadius: 4 }
-      ]
-    },
+    data: { labels: types, datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
-        y: { beginAtZero: true, grid: { color: '#F4F6F8' }, ticks: { color: '#8896A8', callback: v => v + ' €/m²' } },
-        x: { grid: { display: false }, ticks: { color: '#8896A8' } }
+        y: {
+          beginAtZero: true,
+          grid: { color: '#F4F6F8' },
+          ticks: { color: '#8896A8', callback: v => v ? v.toLocaleString('fr-FR') + ' €' : '' },
+        },
+        x: { grid: { display: false }, ticks: { color: '#4A5568', font: { weight: '600' } } },
       },
       plugins: {
-        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw} €/m²` } }
-      }
-    }
+        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8, color: '#4A5568' } },
+        tooltip: {
+          callbacks: {
+            label: c => ` ${c.dataset.label}: ${c.raw ? c.raw.toLocaleString('fr-FR') + ' €/m²' : 'n/d'}`,
+          },
+        },
+      },
+    },
   });
 }
 
@@ -1579,7 +1673,7 @@ function restoreScanner() {
       window.currentLat = data.lat; window.currentLon = data.lon; window.currentInsee = data.insee;
     } catch(e) { console.error("Restore failed", e); }
   }
-  renderAnalyseChart();
+  renderAnalyseChart(data, null);
 }
 
 document.addEventListener('DOMContentLoaded', restoreScanner);

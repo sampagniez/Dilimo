@@ -1,17 +1,21 @@
-const express = require('express');
-const fs      = require('fs');
-const path    = require('path');
-const csv     = require('csv-parser');
-const cors    = require('cors');
+const express  = require('express');
+const path     = require('path');
+const csv      = require('csv-parser');
+const cors     = require('cors');
+const zlib     = require('zlib');
+
+let _fetch;
+async function getFetch() {
+  if (!_fetch) _fetch = (await import('node-fetch')).default;
+  return _fetch;
+}
 
 const app = express();
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ─── Spatial grid index ───────────────────────────────────────────────────────
+// ─── Spatial grid helpers ────────────────────────────────────────────────────
 const CELL_SIZE = 0.01;
-let spatialGrid = {};
-let dvfRecords  = [];
 
 function cellKey(lat, lon) {
   return `${Math.floor(lat / CELL_SIZE)}_${Math.floor(lon / CELL_SIZE)}`;
@@ -27,37 +31,28 @@ function buildSpatialIndex(records) {
   return grid;
 }
 
-function loadDVF(filePath) {
-  return new Promise((resolve, reject) => {
-    const records = [];
-    fs.createReadStream(filePath)
-      .pipe(csv())
-      .on('data', (row) => {
-        const lat = parseFloat(row.latitude);
-        const lon = parseFloat(row.longitude);
-        const val = parseFloat(row.valeur_fonciere);
-        if (!lat || !lon || !val) return;
-        records.push({
-          lat, lon,
-          valeur:         val,
-          surface:        parseFloat(row.surface_reelle_bati)  || null,
-          surfaceTerrain: parseFloat(row.surface_terrain)      || null,
-          type:           row.type_local      || null,
-          date:           row.date_mutation   || '',
-          pieces:         parseInt(row.nombre_pieces_principales) || null,
-          parcelle:       row.id_parcelle     || null,
-          section:        row.section_prefixe || null,
-          commune:        row.nom_commune     || null,
-          codeCommune:    row.code_commune    || null,
-          codeDept:       row.code_departement|| null,
-          adresse:        [row.adresse_numero, row.adresse_nom_voie].filter(Boolean).join(' '),
-          codePostal:     row.code_postal     || null,
-          natureCulture:  row.nature_culture  || null,
-        });
-      })
-      .on('end', () => resolve(records))
-      .on('error', reject);
-  });
+function parseRow(row) {
+  const lat = parseFloat(row.latitude);
+  const lon = parseFloat(row.longitude);
+  const val = parseFloat(row.valeur_fonciere);
+  if (!lat || !lon || !val) return null;
+  return {
+    lat, lon,
+    valeur:         val,
+    surface:        parseFloat(row.surface_reelle_bati)         || null,
+    surfaceTerrain: parseFloat(row.surface_terrain)             || null,
+    type:           row.type_local                              || null,
+    date:           row.date_mutation                           || '',
+    pieces:         parseInt(row.nombre_pieces_principales)     || null,
+    parcelle:       row.id_parcelle                             || null,
+    section:        row.section_prefixe                         || null,
+    commune:        row.nom_commune                             || null,
+    codeCommune:    row.code_commune                            || null,
+    codeDept:       row.code_departement                        || null,
+    adresse:        [row.adresse_numero, row.adresse_nom_voie].filter(Boolean).join(' '),
+    codePostal:     row.code_postal                             || null,
+    natureCulture:  row.nature_culture                          || null,
+  };
 }
 
 function haversine(lat1, lon1, lat2, lon2) {
@@ -69,7 +64,7 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-function searchRadius(lat, lon, distKm) {
+function searchRadius(grid, lat, lon, distKm) {
   const cellsNeeded = Math.ceil(distKm / (CELL_SIZE * 111)) + 1;
   const centerLatCell = Math.floor(lat / CELL_SIZE);
   const centerLonCell = Math.floor(lon / CELL_SIZE);
@@ -77,7 +72,7 @@ function searchRadius(lat, lon, distKm) {
   for (let dlat = -cellsNeeded; dlat <= cellsNeeded; dlat++) {
     for (let dlon = -cellsNeeded; dlon <= cellsNeeded; dlon++) {
       const key = `${centerLatCell + dlat}_${centerLonCell + dlon}`;
-      if (spatialGrid[key]) candidates.push(...spatialGrid[key]);
+      if (grid[key]) candidates.push(...grid[key]);
     }
   }
   return candidates.filter(r => haversine(lat, lon, r.lat, r.lon) <= distKm);
@@ -105,22 +100,104 @@ function stats(prices) {
   };
 }
 
-app.get('/api/dvf', (req, res) => {
+// ─── data.gouv.fr DVF loader ─────────────────────────────────────────────────
+const DVF_BASE = 'https://files.data.gouv.fr/geo-dvf/latest/csv';
+const CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12h
+const deptCache = new Map(); // deptCode → { records, grid, ts }
+const loadingPromises = new Map(); // avoid parallel downloads for same dept
+
+async function fetchDeptYear(deptCode, year) {
+  const fetch = await getFetch();
+  const url   = `${DVF_BASE}/${year}/departements/${deptCode}.csv.gz`;
+  const res   = await fetch(url);
+  if (res.status === 404) return [];
+  if (!res.ok) throw new Error(`HTTP ${res.status} pour ${url}`);
+
+  return new Promise((resolve, reject) => {
+    const records = [];
+    const gunzip  = zlib.createGunzip();
+    res.body.pipe(gunzip).pipe(csv())
+      .on('data', (row) => { const r = parseRow(row); if (r) records.push(r); })
+      .on('end',  () => resolve(records))
+      .on('error', reject);
+  });
+}
+
+async function loadDeptRecords(deptCode) {
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let y = currentYear; y >= Math.max(currentYear - 3, 2021); y--) years.push(y);
+
+  console.log(`[DVF] Téléchargement dép. ${deptCode} (années ${years.join(', ')})…`);
+  const chunks = await Promise.all(
+    years.map(y => fetchDeptYear(deptCode, y).catch(e => {
+      console.warn(`[DVF] ${deptCode}/${y} ignoré : ${e.message}`);
+      return [];
+    }))
+  );
+  const records = chunks.flat();
+  const grid    = buildSpatialIndex(records);
+  console.log(`[DVF] ${deptCode} : ${records.length.toLocaleString('fr-FR')} transactions en mémoire`);
+  return { records, grid, ts: Date.now() };
+}
+
+async function getDeptData(deptCode) {
+  const cached = deptCache.get(deptCode);
+  if (cached && Date.now() - cached.ts < CACHE_TTL_MS) return cached;
+
+  // Deduplicate concurrent requests for the same dept
+  if (!loadingPromises.has(deptCode)) {
+    const p = loadDeptRecords(deptCode)
+      .then(entry => { deptCache.set(deptCode, entry); loadingPromises.delete(deptCode); return entry; })
+      .catch(e   => { loadingPromises.delete(deptCode); throw e; });
+    loadingPromises.set(deptCode, p);
+  }
+  return loadingPromises.get(deptCode);
+}
+
+// ─── Département from lat/lon via BAN reverse geocode ───────────────────────
+async function fetchDeptCode(lat, lon) {
+  const fetch = await getFetch();
+  const url   = `https://api-adresse.data.gouv.fr/reverse/?lon=${lon}&lat=${lat}`;
+  const res   = await fetch(url);
+  const data  = await res.json();
+  const citycode = data.features?.[0]?.properties?.citycode;
+  if (!citycode) throw new Error('Département introuvable pour ces coordonnées');
+  return citycode.startsWith('97') ? citycode.slice(0, 3) : citycode.slice(0, 2);
+}
+
+// ─── API : DVF ───────────────────────────────────────────────────────────────
+app.get('/api/dvf', async (req, res) => {
   const lat    = parseFloat(req.query.lat);
   const lon    = parseFloat(req.query.lon);
   const dist   = parseFloat(req.query.dist)   || 1;
   const months = parseInt(req.query.months)   || 24;
   if (!lat || !lon) return res.status(400).json({ error: 'lat/lon requis' });
 
+  let deptCode;
+  try {
+    deptCode = await fetchDeptCode(lat, lon);
+  } catch (e) {
+    return res.status(400).json({ error: 'Impossible de déterminer le département', detail: e.message });
+  }
+
+  let deptData;
+  try {
+    deptData = await getDeptData(deptCode);
+  } catch (e) {
+    console.error('[DVF] Erreur chargement :', e);
+    return res.status(500).json({ error: 'Erreur chargement données DVF', detail: e.message });
+  }
+
   const cutoff = new Date();
   cutoff.setMonth(cutoff.getMonth() - months);
   const cutoffStr = cutoff.toISOString().slice(0, 10);
   const t0 = Date.now();
 
-  const nearby  = searchRadius(lat, lon, dist).filter(r => r.date >= cutoffStr);
-  const apparts = nearby.filter(r => r.type === 'Appartement' && r.surface  > 5);
-  const maisons = nearby.filter(r => r.type === 'Maison'      && r.surface  > 5);
-  const terrains= nearby.filter(r => (!r.type || r.type === '') && r.surfaceTerrain > 0);
+  const nearby   = searchRadius(deptData.grid, lat, lon, dist).filter(r => r.date >= cutoffStr);
+  const apparts  = nearby.filter(r => r.type === 'Appartement' && r.surface  > 5);
+  const maisons  = nearby.filter(r => r.type === 'Maison'      && r.surface  > 5);
+  const terrains = nearby.filter(r => (!r.type || r.type === '') && r.surfaceTerrain > 0);
 
   const typologies = {};
   for (const r of apparts) {
@@ -153,9 +230,9 @@ app.get('/api/dvf', (req, res) => {
       surface: r.surface, pieces: r.pieces, date: r.date,
       adresse: r.adresse, commune: r.commune }));
 
-  console.log(`[DVF] ${lat},${lon} dist=${dist}km months=${months} → ${nearby.length} en ${Date.now()-t0}ms`);
+  console.log(`[DVF] ${lat},${lon} dép=${deptCode} dist=${dist}km months=${months} → ${nearby.length} en ${Date.now()-t0}ms`);
   res.json({
-    zone: { lat, lon, dist, months }, total: nearby.length, tempsMs: Date.now()-t0,
+    zone: { lat, lon, dist, months }, dept: deptCode, total: nearby.length, tempsMs: Date.now()-t0,
     appartements: { stats: stats(apparts.map(r => r.valeur/r.surface)), typologies: typoStats },
     maisons:      { stats: stats(maisons.map(r => r.valeur/r.surface)) },
     terrains:     { stats: stats(terrains.map(r => r.valeur/r.surfaceTerrain)) },
@@ -164,11 +241,78 @@ app.get('/api/dvf', (req, res) => {
 });
 
 app.get('/api/status', (req, res) => {
+  const depts = [...deptCache.entries()].map(([code, d]) => ({
+    code,
+    transactions: d.records.length,
+    ageMin: Math.round((Date.now() - d.ts) / 60000),
+  }));
   res.json({
-    transactions: dvfRecords.length,
-    cellulesIndex: Object.keys(spatialGrid).length,
+    source: 'data.gouv.fr (DVF géolocalisé)',
+    departementsEnCache: depts.length,
+    depts,
     memoireMB: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
     ok: true,
+  });
+});
+
+// ─── API : Annonces à vendre (scraping PAP.fr) ───────────────────────────────
+const annoncesCache = new Map();  // key → { data, ts }
+const ANNONCES_TTL  = 6 * 60 * 60 * 1000; // 6h
+
+app.get('/api/annonces', async (req, res) => {
+  const lat  = parseFloat(req.query.lat);
+  const lon  = parseFloat(req.query.lon);
+  if (!lat || !lon) return res.status(400).json({ error: 'lat/lon requis' });
+
+  // Determine city name + dept + postal from BAN reverse geocode
+  let city, dept, postal;
+  try {
+    const fetch = await getFetch();
+    const geo   = await fetch(`https://api-adresse.data.gouv.fr/reverse/?lon=${lon}&lat=${lat}`);
+    const geoData = await geo.json();
+    const props = geoData.features?.[0]?.properties;
+    if (!props) throw new Error('Pas de résultat geocode');
+    city   = props.city || props.municipality || '';
+    postal = props.postcode || '';
+    dept   = props.context?.split(',')[0]?.trim() || postal.slice(0, 2);
+  } catch (e) {
+    return res.status(400).json({ error: 'Géocode échoué', detail: e.message });
+  }
+
+  const cacheKey = `${city}_${postal}`;
+  const cached   = annoncesCache.get(cacheKey);
+  if (cached && Date.now() - cached.ts < ANNONCES_TTL) {
+    return res.json({ ...cached.data, cached: true });
+  }
+
+  // Spawn Python scraper
+  const { spawn } = require('child_process');
+  const scriptPath = path.join(__dirname, 'scraper_annonces.py');
+  const input      = JSON.stringify({ lat, lon, city, dept, postal });
+
+  const py = spawn('python3', [scriptPath]);
+  py.stdin.write(input);
+  py.stdin.end();
+
+  let stdout = '', stderr = '';
+  py.stdout.on('data', d => { stdout += d.toString(); });
+  py.stderr.on('data', d => { stderr += d.toString(); process.stdout.write('[Annonces] ' + d.toString()); });
+
+  py.on('close', (code) => {
+    try {
+      const data = JSON.parse(stdout);
+      if (!data.error) {
+        annoncesCache.set(cacheKey, { data, ts: Date.now() });
+      }
+      res.json(data);
+    } catch (e) {
+      console.error('[Annonces] JSON parse error:', e.message, stdout.slice(0, 200));
+      res.status(500).json({ error: 'Erreur scraping annonces', detail: stderr.slice(0, 500) });
+    }
+  });
+
+  py.on('error', (e) => {
+    res.status(500).json({ error: 'Impossible de lancer le scraper Python', detail: e.message });
   });
 });
 
@@ -176,9 +320,9 @@ app.get('/api/status', (req, res) => {
 app.post('/api/rapport', express.json({ limit: '2mb' }), (req, res) => {
   const { spawn } = require('child_process');
   const os = require('os');
-  const tmpFile = require('path').join(os.tmpdir(), 'rapport_' + Date.now() + '.pdf');
+  const tmpFile = path.join(os.tmpdir(), 'rapport_' + Date.now() + '.pdf');
   const payload = JSON.stringify(req.body);
-  const scriptPath = require('path').join(__dirname, 'generer_rapport.py');
+  const scriptPath = path.join(__dirname, 'generer_rapport.py');
 
   const py = spawn('python3', [scriptPath, tmpFile]);
   py.stdin.write(payload);
@@ -203,25 +347,14 @@ app.get('/{*path}', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-const DVF_PATH = process.env.DVF_PATH || path.join(__dirname, 'data', 'dvf.csv');
-const PORT     = process.env.PORT     || 3000;
+const PORT = process.env.PORT || 3000;
 
 console.log('\n=============================================');
-console.log('  ImmoAnalytics Pro — Démarrage');
+console.log('  Dilimo — ImmoAnalytics Pro');
 console.log('=============================================');
-console.log('📂 Données :', DVF_PATH);
+console.log('📡 Source : data.gouv.fr — DVF géolocalisé');
+console.log('🗂️  Chargement à la demande par département');
+console.log(`🚀 Application → http://localhost:${PORT}`);
+console.log('=============================================\n');
 
-loadDVF(DVF_PATH).then(records => {
-  dvfRecords  = records;
-  spatialGrid = buildSpatialIndex(records);
-  const memMB = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
-  console.log(`✅ ${records.length.toLocaleString('fr-FR')} transactions chargées`);
-  console.log(`🗂️  Index spatial : ${Object.keys(spatialGrid).length.toLocaleString('fr-FR')} cellules`);
-  console.log(`💾 Mémoire : ~${memMB} Mo`);
-  console.log(`🚀 Application → http://localhost:${PORT}`);
-  console.log('=============================================\n');
-  app.listen(PORT);
-}).catch(err => {
-  console.error('❌ Erreur chargement :', err.message);
-  app.listen(PORT, () => console.log(`⚠️  Serveur sans données → http://localhost:${PORT}\n`));
-});
+app.listen(PORT);
