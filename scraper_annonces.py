@@ -77,6 +77,73 @@ def notify_captcha(page):
         pass
 
 
+def _clean_chrome_locks(user_data_dir: str):
+    """Supprime les fichiers de verrou Chrome qui empêchent le redémarrage
+    si la session précédente n'a pas été fermée proprement."""
+    for name in ("SingletonLock", "SingletonCookie", "SingletonSocket"):
+        lock = os.path.join(user_data_dir, name)
+        try:
+            os.remove(lock)
+            sys.stderr.write(f"[LBC] Supprimé lock file : {name}\n")
+        except FileNotFoundError:
+            pass
+        except Exception as e:
+            sys.stderr.write(f"[LBC] Impossible de supprimer {name}: {e}\n")
+
+
+def _kill_dilimo_chrome(user_data_dir: str):
+    """Termine uniquement les processus Chrome qui utilisent notre profil Dilimo.
+    Ne touche PAS au Chrome normal de l'utilisateur.
+    Nécessaire car macOS refuse 2 instances Chrome partageant le bootstrap system."""
+    import subprocess, signal, time
+    try:
+        result = subprocess.run(
+            ["pgrep", "-fl", "Google Chrome"],
+            capture_output=True, text=True, timeout=5
+        )
+        killed = 0
+        for line in result.stdout.strip().split("\n"):
+            if not line.strip():
+                continue
+            if user_data_dir in line or "lbc_profile" in line:
+                try:
+                    pid = int(line.split()[0])
+                    os.kill(pid, signal.SIGTERM)
+                    killed += 1
+                    sys.stderr.write(f"[LBC] Terminé Chrome orphelin PID {pid}\n")
+                except (ValueError, ProcessLookupError):
+                    pass
+        if killed:
+            time.sleep(1)  # laisser le temps de se fermer
+    except Exception as e:
+        sys.stderr.write(f"[LBC] _kill_dilimo_chrome: {e}\n")
+
+
+def _is_user_chrome_running(dilimo_profile: str) -> bool:
+    """Détecte si le Chrome de l'utilisateur tourne (hors nos propres processus Dilimo).
+    Retourne True si on risque un conflit macOS bootstrap avec real_chrome=True."""
+    import subprocess
+    try:
+        result = subprocess.run(
+            ["pgrep", "-fl", "Google Chrome"],
+            capture_output=True, text=True, timeout=5
+        )
+        for line in result.stdout.strip().split("\n"):
+            if not line.strip():
+                continue
+            # Ignorer nos processus Dilimo et les helpers non-browser
+            if dilimo_profile in line:
+                continue
+            if any(x in line for x in ["Helper", "crashpad", "Renderer", "GPU"]):
+                continue
+            if "Google Chrome" in line and "--remote-debugging" not in line:
+                # C'est probablement le Chrome de l'utilisateur
+                return True
+    except Exception:
+        pass
+    return False
+
+
 def scrape_lbc(city_name, dept):
     location_slug = f"{city_name}_{dept}000"
     url = (
@@ -88,13 +155,22 @@ def scrape_lbc(city_name, dept):
     user_data_dir = os.path.join(os.path.expanduser("~"), ".dilimo", "lbc_profile")
     os.makedirs(user_data_dir, exist_ok=True)
 
+    # 1. Tuer les Chrome orphelins qui utilisent notre profil Dilimo (pas le Chrome utilisateur)
+    _kill_dilimo_chrome(user_data_dir)
+    # 2. Nettoyer les lock files laissés par une session précédente
+    _clean_chrome_locks(user_data_dir)
+
+    # Détecter si le Chrome de l'utilisateur tourne déjà (conflit macOS bootstrap)
+    user_chrome_running = _is_user_chrome_running(user_data_dir)
+    if user_chrome_running:
+        sys.stderr.write("[LBC] Chrome utilisateur détecté — utilisation de Patchright Chromium\n")
+    else:
+        sys.stderr.write("[LBC] Pas de Chrome en cours — utilisation du vrai Chrome\n")
+
     sys.stderr.write(f"[LBC] Fetching {url}\n")
 
-    page = StealthyFetcher.fetch(
-        url,
+    fetch_kwargs = dict(
         headless=False,
-        real_chrome=True,
-        user_data_dir=user_data_dir,
         network_idle=False,
         load_dom=True,
         wait_selector="#__NEXT_DATA__",
@@ -106,8 +182,21 @@ def scrape_lbc(city_name, dept):
         page_action=notify_captcha,
     )
 
+    if not user_chrome_running:
+        # Vrai Chrome : meilleur fingerprint, bypass DataDome
+        fetch_kwargs["real_chrome"] = True
+        fetch_kwargs["user_data_dir"] = user_data_dir
+    else:
+        # Patchright Chromium : pas de conflit macOS
+        # On utilise quand même le user_data_dir pour les cookies DataDome
+        fetch_kwargs["real_chrome"] = False
+        fetch_kwargs["user_data_dir"] = user_data_dir
+
+    page = StealthyFetcher.fetch(url, **fetch_kwargs)
+
     sys.stderr.write(f"[LBC] Status: {page.status}\n")
     if page.status != 200:
+        sys.stderr.write("[LBC] Bloqué (DataDome). Résolvez le CAPTCHA si une fenêtre est ouverte.\n")
         return []
 
     nd = page.find("#__NEXT_DATA__")
