@@ -169,7 +169,7 @@ async function fetchDeptYear(deptCode, year) {
 async function loadDeptRecords(deptCode) {
   const currentYear = new Date().getFullYear();
   const years = [];
-  for (let y = currentYear; y >= Math.max(currentYear - 3, 2021); y--) years.push(y);
+  for (let y = currentYear - 1; y >= Math.max(currentYear - 3, 2022); y--) years.push(y);
 
   console.log(`[DVF] Téléchargement dép. ${deptCode} (années ${years.join(', ')})…`);
   const chunks = await Promise.all(

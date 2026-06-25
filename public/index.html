@@ -1178,11 +1178,15 @@ async function analyze(lat, lon, label = '', insee = '') {
   const hintTimer = setTimeout(() => {
     if (subEl) subEl.textContent = '📡 Chargement des données DVF depuis data.gouv.fr…';
   }, 2500);
+  const coldStartTimer = setTimeout(() => {
+    if (subEl) subEl.textContent = '⏳ Premier chargement du département en cours (30–60 sec) — merci de patienter…';
+  }, 12000);
 
   try {
     const url = `/api/dvf?lat=${lat}&lon=${lon}&dist=${filters.dist}&months=${filters.months}`;
     const res = await fetch(url);
     clearTimeout(hintTimer);
+    clearTimeout(coldStartTimer);
     if (subEl) subEl.textContent = '';
     const data = await res.json();
     dvfDataCache = data;

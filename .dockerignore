@@ -4,3 +4,10 @@ node_modules
 *.md
 Dockerfile
 .dockerignore
+data/dvf.zip
+data/dvf.csv
+data/brut
+*.log
+*.pid
+test.pdf
+test_rapport.pdf
